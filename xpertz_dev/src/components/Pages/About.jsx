@@ -1,57 +1,43 @@
 import React from 'react';
-import { Typography, Row, Col } from 'antd'; // Importing Ant Design components
+import { Typography, Row, Col, Image } from 'antd';
 
 import download from "../../assets/images/download.png";
 const { Title, Paragraph } = Typography;
 
-export default function About_xpertzdev() {
+export default function AboutUs() {
   return (
     // Hero Section
-    <section id="aboutUs" style={{ color: "black", padding: "60px 0" }}>
-      <div className="inner_wrapper">
-        <div className="container">
-          {/* Title */}
-          <Title level={2} style={{ textAlign: "center" }}>
-            About Us
-          </Title>
+    <section id="aboutUs">
+      <div className="container">
+        {/* Title */}
+        <Title level={2} style={{ textAlign: "center", marginBottom: 20 }}>
+          About Us
+        </Title>
 
-          {/* Inner Section */}
-          <div className="inner_section">
-            <Row gutter={[16, 16]} align="middle">
-              {/* Text Section - Left */}
-              <Col
-                xs={24}
-                sm={12}
-                md={12}
-                lg={12}
-                style={{ textAlign: "left", padding: "40px",  marginBottom: "40px" , fontSize: "8px" }} // Adjusted font size
-              >
-                 <p><strong>Xpertz Dev IT Solution</strong> is an emerging IT Company which mainly provide Software as a Service.</p>
-                 <p>Among a plethora of services, Web Design and Development, E-Commerce Solution, Domain / Hosting, Business SMS are few that we offer. </p>
-              </Col>
+        {/* Inner Section */}
+        <Row gutter={[16, 16]} align="middle">
+          {/* Text Section - Left */}
+          <Col xs={24} sm={12} md={12} lg={12}>
+            <div style={{ padding: 20, backgroundColor: '#f7f7f7', borderRadius: 10 }}>
+              <Title level={4}>Our Mission</Title>
+              <Paragraph>
+                <strong>Xpertz Dev IT Solution</strong> is an emerging IT Company which mainly provide Software as a Service.
+              </Paragraph>
+              <Paragraph>
+                Among a plethora of services, Web Design and Development, E-Commerce Solution, Domain / Hosting, Business SMS are few that we offer.
+              </Paragraph>
+            </div>
+          </Col>
 
-              {/* Image Section - Right */}
-              <Col
-                xs={24}
-                sm={12}
-                md={12}
-                lg={12}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "40px",
-                }}
-              >
-                <img
-                  src={download}
-                  alt="Xpertz Dev"
-                  style={{ width: "80%", borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-          </div>
-        </div>
+          {/* Image Section - Right */}
+          <Col xs={24} sm={12} md={12} lg={12}>
+            <Image
+              src={download}
+              alt="Xpertz Dev"
+              style={{ width: '100%', borderRadius: 10 }}
+            />
+          </Col>
+        </Row>
       </div>
     </section>
   );

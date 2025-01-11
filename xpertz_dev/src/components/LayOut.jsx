@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import Footer_dev from './Footer';
-import Header_dev from './Header';
-import Home_xpertzdev from './Pages/Home';
-import About_xpertzdev from './Pages/About';
-import Services_xpertzdev from './Pages/Services';
+import Foot from './Footer';
+import Head from './Header';
+import Home from './Pages/Home';
+import AboutUs from './Pages/About';
+import Services from './Pages/Services';
 
 
 
@@ -13,11 +13,11 @@ export default function LayOut_dev() {
   
   return (
     <Layout>
-     <Header_dev/>
-      <Home_xpertzdev/>
-       <About_xpertzdev/>
-        <Services_xpertzdev/>
-   <Footer_dev/>
+     <Head/>
+      <Home/>
+       <AboutUs/>
+        <Services/>
+   <Foot/>
     </Layout>
   );
 }

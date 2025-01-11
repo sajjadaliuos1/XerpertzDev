@@ -5,7 +5,7 @@ import logo from "../assets/images/logo.png"; // Adjust the path to the actual l
 const { Header } = Layout;
 
 const items = [
-  { key: "1", label: <a href="#hero_section">Home</a> },
+  { key: "1", label: <a href="#home">Home</a> },
   { key: "2", label: <a href="#aboutUs">About Us</a> },
   { key: "3", label: <a href="#service">Services</a> },
   { key: "4", label: <a href="#gallery-1">Portfolio</a> },
@@ -15,7 +15,7 @@ const items = [
   { key: "8", label: <a href="#contact">Contact</a> },
 ];
 
-export default function Header_dev() {
+export default function Head() {
   return (
     <Header
       id="header_wrapper"
