@@ -64,8 +64,9 @@ export default function Services_xpertzdev() {
 
             {/* Tabs Section - Right */}
             <Col xs={24} sm={16} md={18}>
-              <Card bordered={false}>
-                <Tabs defaultActiveKey="1" style={{ color: "black" }} items={[
+              <Card bordered={false} >
+                <Tabs defaultActiveKey="1" style={{ color: "black",
+                 }} items={[
                   {
                     key: "1",
                     label: (
@@ -76,8 +77,8 @@ export default function Services_xpertzdev() {
                     ),
                     children: (
                       <>
-                        <Title level={4}>Web Development</Title>
-                        <Paragraph>
+                        <Title level={5}>Web Development</Title>
+                        <Paragraph style={{fontSize:"8"}}>
                           If your website is more than just a static informational page, you need the skills of a programmer who knows how to bring your website to life. Interactive features, embedded applications, and database requests all require specialized programming skills.
                         </Paragraph>
                       </>
@@ -93,7 +94,7 @@ export default function Services_xpertzdev() {
                     ),
                     children: (
                       <>
-                        <Title level={4}>Web Designing</Title>
+                        <Title level={5}>Web Designing</Title>
                         <Paragraph>
                           Effective web design is more than just a few pretty graphics. It needs to be carefully planned for optimal layout to improve functionality and enhance user experience.
                         </Paragraph>
@@ -110,7 +111,7 @@ export default function Services_xpertzdev() {
                     ),
                     children: (
                       <>
-                        <Title level={4}>Graphic Designing</Title>
+                        <Title level={5}>Graphic Designing</Title>
                         <Paragraph>
                           Graphics Design plays a critical role in market perception. Good design makes your business stand out, leaving a lasting impression on your customers and audience.
                         </Paragraph>
@@ -127,7 +128,7 @@ export default function Services_xpertzdev() {
                     ),
                     children: (
                       <>
-                        <Title level={4}>SEO</Title>
+                        <Title level={5}>SEO</Title>
                         <Paragraph>
                           SEO (Search Engine Optimization) is an effective marketing tool that can boost your traffic, enhance visibility, and improve your rankings in search engines, driving more qualified visitors to your site.
                         </Paragraph>
@@ -144,7 +145,7 @@ export default function Services_xpertzdev() {
                     ),
                     children: (
                       <>
-                        <Title level={4}>App Development</Title>
+                        <Title level={5}>App Development</Title>
                         <Paragraph>
                           Our team is proficient in developing iOS and Android apps that enhance user experience and fulfill business requirements. We create apps that are functional, scalable, and user-friendly.
                         </Paragraph>
