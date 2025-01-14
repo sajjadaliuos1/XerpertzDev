@@ -9,7 +9,7 @@ export default function Foot() {
       className="footer_wrapper"
       id="contact"
       style={{
-        padding: '20px 0',
+        padding: '70px 0',
         backgroundColor: '#000', // Black background
         color: '#fff', // White text
       }}

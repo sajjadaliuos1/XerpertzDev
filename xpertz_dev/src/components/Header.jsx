@@ -1,18 +1,19 @@
 import React from "react";
 import { Layout, Menu } from "antd";
-import logo from "../assets/images/logo.png"; // Adjust the path to the actual location of your logo
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import logo from "../assets/images/logo.png"; 
 
 const { Header } = Layout;
 
 const items = [
-  { key: "1", label: <a href="#home">Home</a> },
-  { key: "2", label: <a href="#aboutUs">About Us</a> },
-  { key: "3", label: <a href="#service">Services</a> },
-  { key: "4", label: <a href="#gallery-1">Portfolio</a> },
-  { key: "5", label: <a href="#domain">Domains/Hosting</a> },
-  { key: "6", label: <a href="#sms">Business SMS</a> },
-  { key: "7", label: <a href="#team">Team</a> },
-  { key: "8", label: <a href="#contact">Contact</a> },
+  { key: "1", label: <Link to="/">Home</Link> }, // Update to Link
+  { key: "2", label: <Link to="/about">About Us</Link> }, // Update to Link
+  { key: "3", label: <Link to="/services">Services</Link> }, // Update to Link
+  { key: "4", label: <Link to="/portfolio">Portfolio</Link> }, // Update to Link
+  { key: "5", label: <Link to="/domain">Domains/Hosting</Link> }, // Update to Link
+  { key: "6", label: <Link to="/business">Business SMS</Link> }, // Update to Link
+  { key: "7", label: <Link to="/teams">Team</Link> }, // Update to Link
+  { key: "8", label: <Link to="/contact">Contact</Link> }, // Update to Link
 ];
 
 export default function Head() {
@@ -23,16 +24,22 @@ export default function Head() {
         position: "fixed",
         zIndex: 1,
         width: "100%",
-        backgroundColor: "white", // Transparent background
+        backgroundColor: "white",
         borderBottom: "1px solid #ddd",
-        marginBottom:"0px" // Optional border
+        top: 0,
+        left: 0,
+        margin: 0,
+        padding: 0,
       }}
     >
-      <div className="container" style={{ display: "flex", alignItems: "center" }}>
+      <div
+        className="container"
+        style={{ display: "flex", alignItems: "center", height: "64px", marginLeft: "30px" }}
+      >
         {/* Logo */}
-        <div className="logo" style={{ marginRight: "10px" }}>
-          <a href="#">
-            <img src={logo} alt="logo" style={{ height: "30px" }} />
+        <div className="logo" style={{ marginLeft: "20px", marginTop: "20px" }}>
+          <a href="https://xpertzdev.com/">
+            <img src={logo} alt="logo" style={{ height: "40px" }} />
           </a>
         </div>
 
@@ -44,11 +51,12 @@ export default function Head() {
           style={{
             flex: 1,
             display: "flex",
-            justifyContent: "flex-start", // Align items to the start
-            background: "transparent", // Remove menu background
-            border: "none", // Remove default border
-            fontSize: "10px", // Make menu font smaller
-            padding: 0, // Remove default padding
+            justifyContent: "flex-start",
+            background: "transparent",
+            border: "none",
+            fontSize: "10px",
+            fontWeight: "bold", // Set font size directly here
+            padding: 0,
           }}
         />
       </div>
