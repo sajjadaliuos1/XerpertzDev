@@ -1,64 +1,82 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Layout, Row, Col, Typography, Space, Divider } from 'antd';
+import { EnvironmentOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
 
 const { Footer } = Layout;
+const { Title, Text } = Typography;
 
 export default function Foot() {
   return (
     <Footer
-      className="footer_wrapper"
-      id="contact"
       style={{
-        padding: '70px 0',
-        backgroundColor: '#000', // Black background
-        color: '#fff', // White text
+        backgroundColor: '#001529',
+        color: '#fff',
+        padding: '50px 0',
       }}
     >
       <div className="container">
-        <section
-          className="page_section contact"
-          id="contact"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            flexWrap: 'wrap',
-            color: '#fff',
-          }}
-        >
-          <div className="contact-item">
-            <div className="contact-address">
-              <i className="ion-ios-location-outline"></i>
-              <h1>Address</h1>
-              <p>
-                Office No. 1, 2nd Floor,<br/>
-                 Ali Plaza New Madyan Road,<br/>
-                  Mingora
-                Swat.
-              </p>
-            </div>
-          </div>
-          <div className="contact-item">
-            <div className="contact-phone">
-              <i className="ion-ios-telephone-outline"></i>
-              <h1>Call us</h1>
-              <p>
-                +92 333 9471086 <br /> 0946-811722
-              </p>
-            </div>
-          </div>
-          <div className="contact-item">
-            <div className="contact-email">
-              <i className="ion-ios-email-outline"></i>
-              <h1>Emails</h1>
-              <p>info@xpertzdev.com</p>
-            </div>
-          </div>
-          
+        <section id="contact">
+          <Title level={2} style={{ textAlign: 'center', color: '#fff' }}>
+            Contact Us
+          </Title>
+
+          <Row gutter={[16, 16]} justify="space-around">
+            {/* Address Section */}
+            <Col xs={24} sm={8} md={6}>
+              <div style={{ textAlign: 'center' }}>
+                <EnvironmentOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
+                <Title level={4} style={{ color: '#fff' }}>Address</Title>
+                <Text style={{ fontSize: '16px', color: '#fff' }}>
+                  Office No. 1, 2nd Floor, Ali Plaza New Madyan Road, Mingora Swat.
+                </Text>
+              </div>
+            </Col>
+
+            {/* Call Us Section */}
+            <Col xs={24} sm={8} md={6}>
+              <div style={{ textAlign: 'center' }}>
+                <PhoneOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
+                <Title level={4} style={{ color: '#fff' }}>Call Us</Title>
+                <Text style={{ fontSize: '16px', color: '#fff' }}>
+                  +92 333 9471086 <br /> 0946-811722
+                </Text>
+              </div>
+            </Col>
+
+            {/* Emails Section */}
+            <Col xs={24} sm={8} md={6}>
+              <div style={{ textAlign: 'center' }}>
+                <MailOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
+                <Title level={4} style={{ color: '#fff' }}>Emails</Title>
+                <Text style={{ fontSize: '16px', color: '#fff' }}>
+                  info@xpertzdev.com
+                </Text>
+              </div>
+            </Col>
+
+            {/* Visitors Counter Section */}
+            <Col xs={24} sm={8} md={6}>
+              <div style={{ textAlign: 'center' }}>
+                <Title level={4} style={{ color: '#fff' }}>Visitors Counter</Title>
+                <a href="https://www.hitwebcounter.com" target="_blank" rel="noopener noreferrer">
+                  <img
+                    src="https://hitwebcounter.com/counter/counter.php?page=7227526&style=0050&nbdigits=5&type=ip&initCount=5000"
+                    title="User Stats"
+                    alt="PHP Hits Count"
+                    style={{ border: '0', width: '100%' }}
+                  />
+                </a>
+              </div>
+            </Col>
+          </Row>
         </section>
-      </div>
-      <div className="container">
-        <div className="footer_bottom" style={{ textAlign: 'center', marginTop: '20px' }}>
-          <span>Copyright © 2019. Xpertz Dev</span>
+
+        <Divider style={{ borderColor: '#444' }} />
+
+        <div style={{ textAlign: 'center' }}>
+          <Text style={{ color: '#fff' }}>
+            Copyright © 2019. Xpertz Dev
+          </Text>
         </div>
       </div>
     </Footer>

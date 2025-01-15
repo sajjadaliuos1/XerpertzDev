@@ -1,8 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
-import { Route, Routes } from 'react-router-dom'; 
-import Foot from './Footer';
+import { Routes, Route } from 'react-router-dom'; 
 import Head from './Header';
+import Foot from './Footer';
 import Home from './Pages/Home';
 import AboutUs from './Pages/About';
 import Services from './Pages/Services';
@@ -12,21 +12,27 @@ import Teams from './Pages/Teams';
 import Clients from './Pages/Clients';
 import Portfolio from './Pages/portfolio';
 
+const { Content } = Layout;
+
 export default function LayOut_dev() {
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
+      {/* Header stays fixed */}
       <Head />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/business" element={<Business />} />
-        <Route path="/domain" element={<DomainHosting />} />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/teams" element={<Teams />} />
-        <Route path="/clients" element={<Clients />} />
-      </Routes>
-      <br/>
+
+      {/* Content section with all routes */}
+      <Content style={{ padding: '20px' }}>
+        <Home />
+        <AboutUs />
+        <Services />
+        <Portfolio />
+        <DomainHosting />
+        <Business />
+        <Teams />
+        <Clients />
+      </Content>
+
+      {/* Footer at the bottom of the page */}
       <Foot />
     </Layout>
   );

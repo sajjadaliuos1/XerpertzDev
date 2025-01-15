@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card } from 'antd';
+import { Row, Col, Card, Rate, Typography } from 'antd';
 import { Fade } from 'react-awesome-reveal';
 import { HeartOutlined } from '@ant-design/icons';
 
@@ -13,6 +13,8 @@ import pkNurseryLogo from '../../assets/images/pklogo.png';
 import noorCorpLogo from '../../assets/images/logo.jpg';
 import sgmaLogo from '../../assets/images/sgma.png';
 import maarifLogo from '../../assets/images/maarif.png';
+
+const { Title } = Typography;
 
 const clientData = [
   { name: 'YDI Swat', url: 'https://ydi.edu.pk/', logo: ydiLogo },
@@ -28,11 +30,9 @@ const clientData = [
 
 const Clients = () => {
   return (
-    <section id="clients" style={{ padding: '50px 0', backgroundColor: '#f0f2f5' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '40px', color: '#333', fontWeight: 'bold', fontSize: '36px' }}>
-        Our Clients
-      </h2>
-      <Row gutter={[16, 16]} justify="center">
+    <section id="clients" style={{ padding: '70px 0', backgroundColor: '#f0f2f5' }}>
+      <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>Our Clients</Title>
+      <Row gutter={[10, 10]} justify="center">
         {clientData.map((client, index) => (
           <Col xs={24} sm={12} md={8} lg={6} key={index}>
             <Fade delay={index * 100} cascade>
@@ -41,21 +41,22 @@ const Clients = () => {
                 style={{
                   borderRadius: '10px',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   overflow: 'hidden',
+                  transition: 'transform 0.3s ease',
                 }}
                 cover={
                   <a href={client.url} target="_blank" rel="noopener noreferrer">
                     <img
                       alt={client.name}
                       src={client.logo}
+                      className="client-logo"
                       style={{
                         width: '100%',
                         height: '120px',
                         objectFit: 'contain',
                         transition: 'transform 0.3s ease',
+                        paddingTop: '10px',
                       }}
-                      className="logo-img"
                     />
                   </a>
                 }
@@ -63,21 +64,19 @@ const Clients = () => {
                   padding: '20px',
                   textAlign: 'center',
                   backgroundColor: '#fff',
-                  borderRadius: '10px',
-                }}
-                onMouseEnter={(e) => {
-                  const img = e.target.querySelector('img');
-                  img.style.transform = 'scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  const img = e.target.querySelector('img');
-                  img.style.transform = 'scale(1)';
                 }}
               >
                 <Card.Meta
-                  title={client.name}
+                  title={
+                    <div style={{ paddingBottom: '10px', borderBottom: '2px solid #1890ff' }}>
+                      {client.name}
+                    </div>
+                  }
                   description={
-                    <HeartOutlined style={{ color: '#f5222d', fontSize: '18px' }} />
+                    <div style={{ marginTop: '10px' }}>
+                      <HeartOutlined style={{ color: '#f5222d', fontSize: '18px', marginRight: '10px' }} />
+                      <Rate allowHalf defaultValue={4.5} style={{ fontSize: '16px' }} />
+                    </div>
                   }
                 />
               </Card>

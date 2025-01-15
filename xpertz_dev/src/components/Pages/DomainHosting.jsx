@@ -44,29 +44,40 @@ export default function DomainHosting() {
     { feature: 'Sub-domains', details: '10' },
   ];
 
+  const platinumData = [
+    { feature: 'Disk Space', details: '10GB' },
+    { feature: 'Data Transfer', details: 'Unlimited' },
+    { feature: 'Database', details: '10' },
+    { feature: 'Emails', details: '20' },
+    { feature: 'Sub-domains', details: 'Unlimited' },
+  ];
+
   return (
-    <section id="domain" style={{ padding: '40px' }}>
+    <section id="domain" style={{ padding: '70px', backgroundColor: '#f0f2f5' }}>
       <div className="container">
-        <Title level={3} style={{ textAlign: 'center', color: '#1890ff' }}>
+        <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
           Domain / Hosting
         </Title>
-        <Text type="secondary" style={{ textAlign: 'center', color:"black" , display: 'block', marginBottom: '10px' ,fontSize:'12px' }}>
+        <Text
+          type="secondary"
+          style={{
+            textAlign: 'center',
+            color: 'black',
+            display: 'block',
+            marginBottom: '20px',
+            fontSize: '20px',
+          }}
+        >
           SELECT HOSTING PLANS ACCORDING TO YOUR NEEDS (Select Package with .com domain and hosting)
         </Text>
-        <Row gutter={[16, 16]} justify="center">
+        <Row gutter={[30, 30]} justify="center">
           {/* Popular Plan */}
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={12} lg={6}>
             <Card
               title="Popular"
               bordered
               hoverable
-              extra={<Text strong style={{ fontSize: '22px' }}>Rs. 9500 / Year</Text>}
-              style={{
-                textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderRadius: '8px',
-                border: '2px solid #1890ff', // Blue border
-              }}
+              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 9500 / Year</Text>}
             >
               <Table
                 columns={columns}
@@ -74,24 +85,18 @@ export default function DomainHosting() {
                 pagination={false}
                 showHeader={false}
                 bordered
-                size="small"
+                size="large"
               />
             </Card>
           </Col>
 
           {/* Silver Plan */}
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={12} lg={6}>
             <Card
               title="Silver"
               bordered
               hoverable
-              extra={<Text strong style={{ fontSize: '22px' }}>Rs. 13500 / Year</Text>}
-              style={{
-                textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderRadius: '8px',
-                border: '2px solid #1890ff', // Blue border
-              }}
+              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 13500 / Year</Text>}
             >
               <Table
                 columns={columns}
@@ -99,24 +104,18 @@ export default function DomainHosting() {
                 pagination={false}
                 showHeader={false}
                 bordered
-                size="small"
+                size="large"
               />
             </Card>
           </Col>
 
           {/* Gold Plan */}
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={12} lg={6}>
             <Card
               title="Gold"
               bordered
               hoverable
-              extra={<Text strong style={{ fontSize: '22px' }}>Rs. 18500 / Year</Text>}
-              style={{
-                textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                borderRadius: '8px',
-                border: '2px solid #1890ff', // Blue border
-              }}
+              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 18500 / Year</Text>}
             >
               <Table
                 columns={columns}
@@ -124,7 +123,26 @@ export default function DomainHosting() {
                 pagination={false}
                 showHeader={false}
                 bordered
-                size="small"
+                size="large"
+              />
+            </Card>
+          </Col>
+
+          {/* Platinum Plan */}
+          <Col xs={24} sm={12} md={12} lg={6}>
+            <Card
+              title="Platinum"
+              bordered
+              hoverable
+              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 25000 / Year</Text>}
+            >
+              <Table
+                columns={columns}
+                dataSource={platinumData}
+                pagination={false}
+                showHeader={false}
+                bordered
+                size="large"
               />
             </Card>
           </Col>

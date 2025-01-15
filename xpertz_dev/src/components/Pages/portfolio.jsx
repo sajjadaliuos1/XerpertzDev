@@ -26,16 +26,51 @@ const portfolioData = [
     github: 'https://github.com/yourusername/project3',
     liveDemo: 'https://yourwebsite.com/project3',
   },
+  {
+    title: 'Project 4',
+    description: 'This is a brief description of Project 4.',
+    icon: <AppstoreAddOutlined style={{ fontSize: '50px', color: '#1890ff' }} />,
+    github: 'https://github.com/yourusername/project4',
+    liveDemo: 'https://yourwebsite.com/project4',
+  },
+  {
+    title: 'Project 5',
+    description: 'This is a brief description of Project 5.',
+    icon: <AppstoreAddOutlined style={{ fontSize: '50px', color: '#1890ff' }} />,
+    github: 'https://github.com/yourusername/project5',
+    liveDemo: 'https://yourwebsite.com/project5',
+  },
+  {
+    title: 'Project 6',
+    description: 'This is a brief description of Project 6.',
+    icon: <AppstoreAddOutlined style={{ fontSize: '50px', color: '#1890ff' }} />,
+    github: 'https://github.com/yourusername/project6',
+    liveDemo: 'https://yourwebsite.com/project6',
+  },
+  {
+    title: 'Project 6',
+    description: 'This is a brief description of Project 6.',
+    icon: <AppstoreAddOutlined style={{ fontSize: '50px', color: '#1890ff' }} />,
+    github: 'https://github.com/yourusername/project6',
+    liveDemo: 'https://yourwebsite.com/project6',
+  },
+  {
+    title: 'Project 6',
+    description: 'This is a brief description of Project 6.',
+    icon: <AppstoreAddOutlined style={{ fontSize: '50px', color: '#1890ff' }} />,
+    github: 'https://github.com/yourusername/project6',
+    liveDemo: 'https://yourwebsite.com/project6',
+  },
 ];
 
 export default function Portfolio() {
   return (
-    <Layout style={{ padding: '40px', backgroundColor: '#f0f2f5' }}>
+    <Layout id='portfolio' style={{ padding: '70px', backgroundColor: '#f0f2f5' }}>
       <div className="container">
-        <Title level={3} style={{ textAlign: 'center', color: '#1890ff', }}>
+        <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
           My Portfolio
         </Title>
-        <Row gutter={[15, 15]} justify="center">
+        <Row gutter={[32, 32]} justify="center">
           {portfolioData.map((project, index) => (
             <Col xs={24} sm={12} md={8} lg={6} key={index}>
               <Card
@@ -52,8 +87,8 @@ export default function Portfolio() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '20px', // Reduced padding to minimize space
-                  textAlign: 'center', // Center the text inside the card
+                  padding: '20px',
+                  textAlign: 'center',
                 }}
                 cover={
                   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: '20px' }}>
@@ -61,7 +96,7 @@ export default function Portfolio() {
                   </div>
                 }
                 actions={[
-                    <Button
+                  <Button
                     type="link"
                     icon={<GithubOutlined />}
                     href={project.github}
@@ -70,7 +105,7 @@ export default function Portfolio() {
                       color: '#1890ff',
                       fontSize: '16px',
                       fontWeight: '600',
-                      marginLeft: '10px', // Added left margin
+                      marginLeft: '10px',
                     }}
                   >
                     GitHub
@@ -84,7 +119,7 @@ export default function Portfolio() {
                       color: '#1890ff',
                       fontSize: '16px',
                       fontWeight: '600',
-                      marginLeft: '-30px', // Adjusted right margin
+                      marginLeft: '10px',
                     }}
                   >
                     Live Demo
@@ -100,7 +135,7 @@ export default function Portfolio() {
                 <Card.Meta
                   title={project.title}
                   description={
-                    <Paragraph ellipsis={{ rows: 3 }} style={{ color: '#555', fontSize: '14px', lineHeight: '1.5', margin: 0 }}>
+                    <Paragraph ellipsis={{ rows: 3 }} style={{ color: '#555', fontSize: '20px', lineHeight: '1.5' }}>
                       {project.description}
                     </Paragraph>
                   }

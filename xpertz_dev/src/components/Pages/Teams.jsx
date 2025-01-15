@@ -72,13 +72,13 @@ export default function Teams() {
   };
 
   return (
-    <section id="team" className="page_section team" style={{
-        padding: '50px 0',
+    <section id="teams" className="page_section team" style={{
+        padding: '70px',
       }}>
       <div className="container">
-        <h2 style={{ textAlign: 'center', marginBottom: '40px', color: '#1890ff' }}>Our Team</h2>
+        <h1 style={{ textAlign: 'center', color: '#1890ff' }}>Our Team</h1>
         
-        <Row gutter={[16, 16]} justify="center">
+        <Row gutter={[10, 10]} justify="center">
           {teamMembers.map((member, index) => (
             <Col xs={24} sm={12} md={8} lg={6} xl={6} key={index}> 
               <Fade delay={index * 100}>
@@ -90,14 +90,12 @@ export default function Teams() {
                     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
                     transition: "transform 0.3s ease-in-out",
                     textAlign: "center", // Centering text inside the card
-                    backgroundColor: "#f9f9f9", // Subtle card background
+                    backgroundColor: "#ffffff", // Clean white background
                     padding: "10px", // Extra padding for spacing
                   }}
                   cover={
                     <div 
                       style={{
-                        borderRadius: '50%', 
-                        border: '4px solid #3b5998', // Thinner border
                         overflow: 'hidden',
                       }}
                     >
@@ -106,14 +104,17 @@ export default function Teams() {
                         src={member.imgSrc} 
                         onClick={() => handleImageClick(member.imgSrc)} // Image click triggers modal
                         style={{
-                          width: '120px',  // Smaller width for images
-                          height: '120px', // Smaller height
+                          width: '180px',  // Fixed width for images
+                          height: '180px', // Fixed height
                           objectFit: 'cover', // Ensuring the image fits its container
-                          borderRadius: '50%', // Circular image
+                          borderRadius: '10px', // Subtle rounded edges
                           margin: 'auto', // Centering the image
                           display: 'block', // Centering the image
                           cursor: 'pointer', // Change cursor to indicate clickable
+                          transition: 'transform 0.3s ease-in-out', // Smooth animation
                         }} 
+                        onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} // Scale up on hover
+                        onMouseLeave={(e) => e.target.style.transform = 'scale(1)'} // Scale back on leave
                       />
                     </div>
                   }
@@ -141,7 +142,7 @@ export default function Teams() {
           visible={isModalVisible}
           footer={null}
           onCancel={handleCancel}
-          width={600} // Adjust modal size
+          width={300} // Adjust modal size
         >
           <img
             alt="Team Member"

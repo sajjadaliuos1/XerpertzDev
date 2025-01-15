@@ -39,10 +39,10 @@ export default function Services() {
     {
       key: "1",
       label: (
-        <Tooltip title="Web Development" overlayStyle={{ fontSize: "16px" }}>
+        <Tooltip title="Web Development" overlayStyle={{ fontSize: "20px" }}>
           <FaGlobe
             style={{
-              fontSize: "40px",
+              fontSize: "60px",
               padding: "10px",
               borderRadius: "50%",
               border: "2px solid #1890ff",
@@ -53,8 +53,8 @@ export default function Services() {
       ),
       children: (
         <>
-          <Title level={5} style={{ marginBottom: 0 }}>Web Development</Title>
-          <Paragraph style={{ marginTop: 0, fontSize: "12px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>Web Development</Title>
+          <Paragraph style={{ marginTop: 0, fontSize: "16px" }}>
             If your website is more than just a static informational page, you need skills to bring it to life. We create
             dynamic, functional websites that deliver seamless user experiences.
           </Paragraph>
@@ -67,7 +67,7 @@ export default function Services() {
         <Tooltip title="Web Designing">
           <FaImage
             style={{
-              fontSize: "40px",
+              fontSize: "60px",
               padding: "10px",
               borderRadius: "50%",
               border: "2px solid #1890ff",
@@ -78,8 +78,8 @@ export default function Services() {
       ),
       children: (
         <>
-          <Title level={5} style={{ marginBottom: 0 }}>Web Designing</Title>
-          <Paragraph style={{ marginTop: 0, fontSize: "12px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>Web Designing</Title>
+          <Paragraph style={{ marginTop: 0, fontSize: "16px" }}>
             Effective web design combines aesthetics and usability. We ensure optimal layouts that enhance user experience
             and functionality.
           </Paragraph>
@@ -92,7 +92,7 @@ export default function Services() {
         <Tooltip title="Graphic Designing">
           <FaCalendarAlt
             style={{
-              fontSize: "40px",
+              fontSize: "60px",
               padding: "10px",
               borderRadius: "50%",
               border: "2px solid #1890ff",
@@ -103,8 +103,8 @@ export default function Services() {
       ),
       children: (
         <>
-          <Title level={5} style={{ marginBottom: 0 }}>Graphic Designing</Title>
-          <Paragraph style={{ marginTop: 0, fontSize: "12px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>Graphic Designing</Title>
+          <Paragraph style={{ marginTop: 0, fontSize: "16px" }}>
             Our designs leave lasting impressions. From branding to marketing, we craft designs that captivate and
             communicate.
           </Paragraph>
@@ -117,7 +117,7 @@ export default function Services() {
         <Tooltip title="SEO">
           <FaSearch
             style={{
-              fontSize: "40px",
+              fontSize: "60px",
               padding: "10px",
               borderRadius: "50%",
               border: "2px solid #1890ff",
@@ -128,8 +128,8 @@ export default function Services() {
       ),
       children: (
         <>
-          <Title level={5} style={{ marginBottom: 0 }}>SEO</Title>
-          <Paragraph style={{ marginTop: 0, fontSize: "12px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>SEO</Title>
+          <Paragraph style={{ marginTop: 0, fontSize: "16px" }}>
             SEO is essential for visibility. We boost your search rankings, increase traffic, and drive more qualified
             visitors to your site.
           </Paragraph>
@@ -142,7 +142,7 @@ export default function Services() {
         <Tooltip title="App Development">
           <FaAndroid
             style={{
-              fontSize: "40px",
+              fontSize: "60px",
               padding: "10px",
               borderRadius: "50%",
               border: "2px solid #1890ff",
@@ -153,8 +153,8 @@ export default function Services() {
       ),
       children: (
         <>
-          <Title level={5} style={{ marginBottom: 0 }}>App Development</Title>
-          <Paragraph style={{ marginTop: 0, fontSize: "12px" }}>
+          <Title level={3} style={{ marginBottom: 0 }}>App Development</Title>
+          <Paragraph style={{ marginTop: 0, fontSize: "16px" }}>
             We create iOS and Android apps that are functional, scalable, and user-friendly, delivering exceptional user
             experiences.
           </Paragraph>
@@ -164,19 +164,19 @@ export default function Services() {
   ];
 
   return (
-    <section id="service" style={{ padding: '40px' }}>
+    <section id="services" style={{ padding: '70px' }}>
       <div className="container">
-        <Title level={3} style={{ textAlign: 'center', color: '#1890ff' }}>
+        <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
           Our Skills & Services
         </Title>
         <Row gutter={[10, 10]}>
           <Col xs={24} md={8}>
             <Card bordered hoverable>
-              <Title level={5} style={{ marginBottom: "10px" }}>What We Are Good At</Title>
-              <Space direction="vertical" style={{ width: "100%", gap: "2px" }}>
+              <Title level={3} style={{ marginBottom: "10px" }}>What We Are Good At</Title>
+              <Space direction="vertical" style={{ width: "100%", gap: "0px" }}>
                 {skills.map((skill, index) => (
                   <div key={index} style={{ marginBottom: "8px", lineHeight: "0.5" }}>
-                    <Paragraph style={{ fontSize: "10px", marginBottom: "-5px", lineHeight: "0.5" }}>
+                    <Paragraph style={{ fontSize: "20px", marginBottom: "10px", lineHeight: "1.5" }}>
                       {skill.title}
                     </Paragraph>
                     <Progress
