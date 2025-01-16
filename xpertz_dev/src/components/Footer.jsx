@@ -1,20 +1,31 @@
-import React from 'react';
-import { Layout, Row, Col, Typography, Space, Divider } from 'antd';
-import { EnvironmentOutlined, PhoneOutlined, MailOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Layout, Row, Col, Typography, Space, Divider, Statistic } from 'antd';
+import { EnvironmentOutlined, PhoneOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Footer } = Layout;
 const { Title, Text } = Typography;
 
 export default function Foot() {
+  const [visitorCount, setVisitorCount] = useState(5000); // Initial visitor count
+
+  useEffect(() => {
+    // Simulate visitor count incrementing
+    const interval = setInterval(() => {
+      setVisitorCount((prevCount) => prevCount + 1); // Increment visitor count
+    }, 5000); // Update every 5 seconds (for demo purposes)
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
   return (
     <Footer
       style={{
         backgroundColor: '#001529',
         color: '#fff',
-        padding: '50px 0',
+        padding: '30px',
       }}
     >
-      <div className="container">
+      <div>
         <section id="contact">
           <Title level={2} style={{ textAlign: 'center', color: '#fff' }}>
             Contact Us
@@ -57,15 +68,15 @@ export default function Foot() {
             {/* Visitors Counter Section */}
             <Col xs={24} sm={8} md={6}>
               <div style={{ textAlign: 'center' }}>
-                <Title level={4} style={{ color: '#fff' }}>Visitors Counter</Title>
-                <a href="https://www.hitwebcounter.com" target="_blank" rel="noopener noreferrer">
-                  <img
-                    src="https://hitwebcounter.com/counter/counter.php?page=7227526&style=0050&nbdigits=5&type=ip&initCount=5000"
-                    title="User Stats"
-                    alt="PHP Hits Count"
-                    style={{ border: '0', width: '100%' }}
-                  />
-                </a>
+                <UserOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
+                <Title level={4} style={{ color: '#fff' }}>Visitors</Title>
+                <Statistic
+                  value={visitorCount}
+                  valueStyle={{
+                    fontSize: '20px',
+                    color: '#fff',
+                  }}
+                />
               </div>
             </Col>
           </Row>

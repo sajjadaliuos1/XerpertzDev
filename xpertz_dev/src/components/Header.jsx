@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Drawer, Button, Anchor } from "antd"; 
+import { Layout, Menu, Drawer, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import logo from "../assets/images/logo.png";
 
@@ -23,13 +23,19 @@ export default function Head() {
   const [defaultSelectedKey, setDefaultSelectedKey] = useState("1");
 
   useEffect(() => {
-    // Set the default selected key based on the current URL hash
     const hash = window.location.hash;
-    const matchingItem = items.find((item) => item.label.props.href === hash);
+    const matchingItem = items.find(
+      (item) => item.label.props.href === hash
+    );
+
     if (matchingItem) {
       setDefaultSelectedKey(matchingItem.key);
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     } else {
-      setDefaultSelectedKey("1"); // Default to Home if no hash is present
+      setDefaultSelectedKey("1");
     }
 
     const handleResize = () => {
@@ -65,21 +71,23 @@ export default function Head() {
         top: 0,
         left: 0,
         padding: 0,
-        height: "15%",
+        height: "14%",
       }}
     >
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
+          justifyContent: "space-between",
           padding: "0 20px",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          width: "100%",
         }}
       >
-        <div className="logo" style={{ marginRight: "40px" }}>
-          <a href="/">
-            <img src={logo} alt="logo" style={{ height: "60px" }} />
+        <div className="logo">
+          <a href="/" onClick={(e) => e.preventDefault()}>
+            <img src={logo} alt="logo" style={{ height: "60px", marginTop:"15px" }} />
           </a>
         </div>
 
@@ -92,11 +100,20 @@ export default function Head() {
               label: (
                 <a
                   onClick={(e) => {
+                    if (item.key === "1") {
+                      e.preventDefault(); // Prevent "Home" from reloading the page
+                      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top instead
+                      return;
+                    }
                     e.preventDefault();
                     customScrollTo(item.label.props.href);
                     setDefaultSelectedKey(item.key);
                   }}
                   href={item.label.props.href}
+                  style={{
+                    textDecoration: "none", // Remove underline
+                    color: "inherit", // Ensure no color changes
+                  }}
                 >
                   {item.label.props.children}
                 </a>
@@ -108,9 +125,11 @@ export default function Head() {
               background: "transparent",
               border: "none",
               fontSize: "18px",
-              fontWeight: "bold",
+              fontWeight: "600",
               padding: 0,
             }}
+            // To remove active menu underline, override the active styles
+            className="custom-menu"
           />
         ) : (
           <>
@@ -135,12 +154,21 @@ export default function Head() {
                   label: (
                     <a
                       onClick={(e) => {
+                        if (item.key === "1") {
+                          e.preventDefault(); // Prevent "Home" from reloading the page
+                          window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top instead
+                          return;
+                        }
                         e.preventDefault();
                         customScrollTo(item.label.props.href);
                         setDefaultSelectedKey(item.key);
                         closeDrawer();
                       }}
                       href={item.label.props.href}
+                      style={{
+                        textDecoration: "none", // Remove underline
+                        color: "inherit", // Ensure no color changes
+                      }}
                     >
                       {item.label.props.children}
                     </a>

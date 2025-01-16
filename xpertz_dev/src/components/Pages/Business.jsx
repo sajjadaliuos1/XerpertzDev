@@ -20,7 +20,7 @@ export default function Business_xpertzdev() {
 
   return (
     <section id="business" style={{ padding: '50px', backgroundColor: '#f0f2f5' }}>
-      <div className="container">
+      
         <Card bordered style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
           <Title level={3} style={{ textAlign: 'center', color: '#1890ff' }}>
             Business SMS
@@ -74,7 +74,7 @@ export default function Business_xpertzdev() {
             </Col>
           </Row>
         </Card>
-      </div>
+     
     </section>
   );
 }

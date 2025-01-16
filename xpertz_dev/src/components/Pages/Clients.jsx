@@ -30,7 +30,7 @@ const clientData = [
 
 const Clients = () => {
   return (
-    <section id="clients" style={{ padding: '70px 0', backgroundColor: '#f0f2f5' }}>
+    <section id="clients" style={{ padding: '60px', backgroundColor: '#f0f2f5' }}>
       <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>Our Clients</Title>
       <Row gutter={[10, 10]} justify="center">
         {clientData.map((client, index) => (

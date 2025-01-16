@@ -21,7 +21,7 @@ export default function LayOut_dev() {
       <Head />
 
       {/* Content section with all routes */}
-      <Content style={{ padding: '20px' }}>
+      <Content>
         <Home />
         <AboutUs />
         <Services />

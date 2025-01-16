@@ -53,101 +53,101 @@ export default function DomainHosting() {
   ];
 
   return (
-    <section id="domain" style={{ padding: '70px', backgroundColor: '#f0f2f5' }}>
-      <div className="container">
-        <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
-          Domain / Hosting
-        </Title>
-        <Text
-          type="secondary"
-          style={{
-            textAlign: 'center',
-            color: 'black',
-            display: 'block',
-            marginBottom: '20px',
-            fontSize: '20px',
-          }}
-        >
-          SELECT HOSTING PLANS ACCORDING TO YOUR NEEDS (Select Package with .com domain and hosting)
-        </Text>
-        <Row gutter={[30, 30]} justify="center">
-          {/* Popular Plan */}
-          <Col xs={24} sm={12} md={12} lg={6}>
-            <Card
-              title="Popular"
+    <section id="domain" style={{ padding: '60px', backgroundColor: '#f0f2f5' }}>
+      
+      <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
+        Domain / Hosting
+      </Title>
+      <Text
+        type="secondary"
+        style={{
+          textAlign: 'center',
+          color: 'black',
+          display: 'block',
+          marginBottom: '20px',
+          fontSize: '20px',
+        }}
+      >
+        SELECT HOSTING PLANS ACCORDING TO YOUR NEEDS (Select Package with .com domain and hosting)
+      </Text>
+      <Row gutter={[30, 30]} justify="center">
+        {/* Popular Plan */}
+        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+          <Card
+            title="Popular"
+            bordered
+            hoverable
+            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 9500 / Year</Text>}
+          >
+            <Table
+              columns={columns}
+              dataSource={popularData}
+              pagination={false}
+              showHeader={false}
               bordered
-              hoverable
-              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 9500 / Year</Text>}
-            >
-              <Table
-                columns={columns}
-                dataSource={popularData}
-                pagination={false}
-                showHeader={false}
-                bordered
-                size="large"
-              />
-            </Card>
-          </Col>
+              size="large"
+            />
+          </Card>
+        </Col>
 
-          {/* Silver Plan */}
-          <Col xs={24} sm={12} md={12} lg={6}>
-            <Card
-              title="Silver"
+        {/* Silver Plan */}
+        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+          <Card
+            title="Silver"
+            bordered
+            hoverable
+            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 13500 / Year</Text>}
+          >
+            <Table
+              columns={columns}
+              dataSource={silverData}
+              pagination={false}
+              showHeader={false}
               bordered
-              hoverable
-              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 13500 / Year</Text>}
-            >
-              <Table
-                columns={columns}
-                dataSource={silverData}
-                pagination={false}
-                showHeader={false}
-                bordered
-                size="large"
-              />
-            </Card>
-          </Col>
+              size="large"
+            />
+          </Card>
+        </Col>
 
-          {/* Gold Plan */}
-          <Col xs={24} sm={12} md={12} lg={6}>
-            <Card
-              title="Gold"
+        {/* Gold Plan */}
+        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+          <Card
+            title="Gold"
+            bordered
+            hoverable
+            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 18500 / Year</Text>}
+          >
+            <Table
+              columns={columns}
+              dataSource={goldData}
+              pagination={false}
+              showHeader={false}
               bordered
-              hoverable
-              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 18500 / Year</Text>}
-            >
-              <Table
-                columns={columns}
-                dataSource={goldData}
-                pagination={false}
-                showHeader={false}
-                bordered
-                size="large"
-              />
-            </Card>
-          </Col>
+              size="large"
+            />
+          </Card>
+        </Col>
 
-          {/* Platinum Plan */}
-          <Col xs={24} sm={12} md={12} lg={6}>
-            <Card
-              title="Platinum"
+        {/* Platinum Plan */}
+        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+          <Card
+            title="Platinum"
+            bordered
+            hoverable
+            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 25000 / Year</Text>}
+          >
+            <Table
+              columns={columns}
+              dataSource={platinumData}
+              pagination={false}
+              showHeader={false}
               bordered
-              hoverable
-              extra={<Text strong style={{ fontSize: '20px' }}>Rs. 25000 / Year</Text>}
-            >
-              <Table
-                columns={columns}
-                dataSource={platinumData}
-                pagination={false}
-                showHeader={false}
-                bordered
-                size="large"
-              />
-            </Card>
-          </Col>
-        </Row>
-      </div>
+              size="large"
+            />
+          </Card>
+        </Col>
+      </Row>
+
     </section>
   );
 }

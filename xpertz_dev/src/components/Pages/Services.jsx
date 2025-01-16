@@ -164,8 +164,8 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" style={{ padding: '70px' }}>
-      <div className="container">
+    <section id="services" style={{ padding: '60px' }}>
+      
         <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
           Our Skills & Services
         </Title>
@@ -196,7 +196,7 @@ export default function Services() {
             </Card>
           </Col>
         </Row>
-      </div>
+      
     </section>
   );
 }

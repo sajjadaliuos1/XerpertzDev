@@ -27,12 +27,9 @@ const imageAnimation = {
 
 export default function Home() {
   return (
-    <Layout style={{ backgroundColor: "#1890ff", minHeight: "90vh" }}>
-      {/* Menu Placeholder (space reserved for menu) */}
-      <div style={{ height: "64px" }}></div>
-
-      {/* Main Content */}
-      <section id="home" style={{ backgroundColor: "#1890ff" }}>
+    <Layout>
+     
+      <section id="home" style={{  padding:"50px",backgroundColor: "#1890ff" }}>
         <Row
           justify="center"
           align="middle"
