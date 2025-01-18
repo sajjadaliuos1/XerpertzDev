@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, Drawer, Button } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, SettingOutlined } from "@ant-design/icons"; // Importing admin icon
 import logo from "../assets/images/logo.png";
 
 const { Header } = Layout;
@@ -70,7 +70,7 @@ export default function Head() {
         borderBottom: "1px solid #ddd",
         top: 0,
         left: 0,
-        padding: 0,
+        padding: "0 20px", // Added padding
         height: "14%",
       }}
     >
@@ -79,12 +79,30 @@ export default function Head() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 20px",
           maxWidth: "1200px",
           margin: "0 auto",
           width: "100%",
         }}
       >
+        {/* Admin Button (Moved to the left side) */}
+        <Button
+          type="primary"
+          icon={<SettingOutlined style={{ color: "white" }} />} // Icon color remains white
+          onClick={() => window.location.href = "/admin"}
+          style={{
+            fontSize: "16px",
+            fontWeight: "600",
+            backgroundColor: "blue", // Blue background for the admin button
+            borderColor: "blue", // Border color also blue
+            color: "white", // Text color white
+            padding: "10px 20px", // Added padding for the button
+            marginRight: "20px", // Space between the button and logo/menu
+            paddingTop: "10px", // Added padding-top for proper alignment
+          }}
+        >
+          Admin Panel
+        </Button>
+
         <div className="logo">
           <a href="/" onClick={(e) => e.preventDefault()}>
             <img src={logo} alt="logo" style={{ height: "60px", marginTop:"15px" }} />
@@ -124,9 +142,9 @@ export default function Head() {
               justifyContent: "center",
               background: "transparent",
               border: "none",
-              fontSize: "18px",
+              fontSize: "14px",
               fontWeight: "600",
-              padding: 0,
+              padding: "10px 0", // Added padding to the menu
             }}
             // To remove active menu underline, override the active styles
             className="custom-menu"
