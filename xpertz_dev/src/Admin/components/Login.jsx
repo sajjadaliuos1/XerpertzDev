@@ -1,7 +1,8 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox, Typography, Layout, Row, Col } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import logo from "../assets/images/logo.png";
+import logo from "../../assets/images/logo.png";
+import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
@@ -152,9 +153,9 @@ export default function Login() {
               <div style={{ textAlign: 'center', marginTop: 16 }}>
                 <Text>
                   Don't have an account?{' '}
-                  <a href="/signup" style={{ color: '#1890ff' }}>
+                  <Link to="/signup" style={{ color: '#1890ff' }}>
                     Sign up
-                  </a>
+                  </Link>
                 </Text>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Menu, Drawer, Button } from "antd";
-import { MenuOutlined, SettingOutlined } from "@ant-design/icons"; // Importing admin icon
+import { MenuOutlined, SettingOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 
 const { Header } = Layout;
@@ -15,18 +16,18 @@ const items = [
   { key: "7", label: <a href="#teams">Team</a> },
   { key: "8", label: <a href="#clients">Our Clients</a> },
   { key: "9", label: <a href="#contact">Contact</a> },
+  
 ];
 
 export default function Head() {
+  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [defaultSelectedKey, setDefaultSelectedKey] = useState("1");
 
   useEffect(() => {
     const hash = window.location.hash;
-    const matchingItem = items.find(
-      (item) => item.label.props.href === hash
-    );
+    const matchingItem = items.find((item) => item.label.props.href === hash);
 
     if (matchingItem) {
       setDefaultSelectedKey(matchingItem.key);
@@ -52,7 +53,6 @@ export default function Head() {
   const showDrawer = () => setIsDrawerVisible(true);
   const closeDrawer = () => setIsDrawerVisible(false);
 
-  // Smooth scrolling
   const customScrollTo = (href) => {
     const element = document.querySelector(href);
     if (element) {
@@ -70,7 +70,7 @@ export default function Head() {
         borderBottom: "1px solid #ddd",
         top: 0,
         left: 0,
-        padding: "0 20px", // Added padding
+        padding: "0 20px",
         height: "14%",
       }}
     >
@@ -84,28 +84,9 @@ export default function Head() {
           width: "100%",
         }}
       >
-        {/* Admin Button (Moved to the left side) */}
-        <Button
-          type="primary"
-          icon={<SettingOutlined style={{ color: "white" }} />} // Icon color remains white
-          onClick={() => window.location.href = "/admin"}
-          style={{
-            fontSize: "16px",
-            fontWeight: "600",
-            backgroundColor: "blue", // Blue background for the admin button
-            borderColor: "blue", // Border color also blue
-            color: "white", // Text color white
-            padding: "10px 20px", // Added padding for the button
-            marginRight: "20px", // Space between the button and logo/menu
-            paddingTop: "10px", // Added padding-top for proper alignment
-          }}
-        >
-          Admin Panel
-        </Button>
-
         <div className="logo">
           <a href="/" onClick={(e) => e.preventDefault()}>
-            <img src={logo} alt="logo" style={{ height: "60px", marginTop:"15px" }} />
+            <img src={logo} alt="logo" style={{ height: "60px", marginTop: "15px" }} />
           </a>
         </div>
 
@@ -119,8 +100,8 @@ export default function Head() {
                 <a
                   onClick={(e) => {
                     if (item.key === "1") {
-                      e.preventDefault(); // Prevent "Home" from reloading the page
-                      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top instead
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                       return;
                     }
                     e.preventDefault();
@@ -129,8 +110,8 @@ export default function Head() {
                   }}
                   href={item.label.props.href}
                   style={{
-                    textDecoration: "none", // Remove underline
-                    color: "inherit", // Ensure no color changes
+                    textDecoration: "none",
+                    color: "inherit",
                   }}
                 >
                   {item.label.props.children}
@@ -144,10 +125,9 @@ export default function Head() {
               border: "none",
               fontSize: "14px",
               fontWeight: "600",
-              padding: "10px 0", // Added padding to the menu
+              padding: "10px 0",
+              flex: 1,
             }}
-            // To remove active menu underline, override the active styles
-            className="custom-menu"
           />
         ) : (
           <>
@@ -173,8 +153,8 @@ export default function Head() {
                     <a
                       onClick={(e) => {
                         if (item.key === "1") {
-                          e.preventDefault(); // Prevent "Home" from reloading the page
-                          window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top instead
+                          e.preventDefault();
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                           return;
                         }
                         e.preventDefault();
@@ -184,8 +164,8 @@ export default function Head() {
                       }}
                       href={item.label.props.href}
                       style={{
-                        textDecoration: "none", // Remove underline
-                        color: "inherit", // Ensure no color changes
+                        textDecoration: "none",
+                        color: "inherit",
                       }}
                     >
                       {item.label.props.children}
@@ -201,6 +181,22 @@ export default function Head() {
             </Drawer>
           </>
         )}
+
+<Button
+  type="primary"
+  icon={<SettingOutlined style={{ color: "white" }} />}
+  onClick={() => navigate("/admin")} // This should navigate correctly
+  style={{
+    fontSize: "16px",
+    fontWeight: "600",
+    backgroundColor: "blue",
+    borderColor: "blue",
+    color: "white",
+  }}
+>
+  Admin Panel
+</Button>
+
       </div>
     </Header>
   );
