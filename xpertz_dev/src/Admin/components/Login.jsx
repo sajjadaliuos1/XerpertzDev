@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Checkbox, Typography, Layout, Row, Col } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import logo from "../../assets/images/logo.png";
-import { Link } from 'react-router-dom';  // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
@@ -35,7 +35,7 @@ export default function Login() {
       <Row
         justify="center"
         align="middle"
-        gutter={[0, 32]} // Adds vertical space between columns
+        gutter={[0, 32]}
         style={{
           flexGrow: 1,
           height: '100%',
@@ -45,9 +45,11 @@ export default function Login() {
           width: '100%',
         }}
       >
-        {/* Left Side: Logo Section */}
         <Col
-          xs={24} sm={24} md={10} lg={10}
+          xs={24}
+          sm={24}
+          md={10}
+          lg={10}
           style={{
             background: '#1890ff',
             display: 'flex',
@@ -78,14 +80,16 @@ export default function Login() {
           </Text>
         </Col>
 
-        {/* Right Side: Login Form Section */}
         <Col
-          xs={24} sm={24} md={12} lg={12}
+          xs={24}
+          sm={24}
+          md={12}
+          lg={12}
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '40px 20px', // Added top padding for space
+            padding: '40px 20px',
             boxSizing: 'border-box',
             width: '100%',
           }}
@@ -153,8 +157,8 @@ export default function Login() {
               <div style={{ textAlign: 'center', marginTop: 16 }}>
                 <Text>
                   Don't have an account?{' '}
-                  <Link to="/signup" style={{ color: '#1890ff' }}>
-                    Sign up
+                  <Link to="/dashboard" style={{ color: '#1890ff' }}>
+                    Dashboard
                   </Link>
                 </Text>
               </div>
