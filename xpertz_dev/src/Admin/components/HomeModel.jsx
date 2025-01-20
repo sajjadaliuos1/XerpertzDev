@@ -40,25 +40,14 @@ export default function HomeModel({ isModalVisible, handleCancel }) {
     }
   };
 
-  const getModalTitle = () => {
-    switch (category) {
-      case 'Home':
-        return 'Add New Home';
-      case 'About Us':
-        return 'Add New About Us';
-      case 'Contact':
-        return 'Add New Contact';
-      default:
-        return 'Add New Item';
-    }
-  };
+  
 
   return (
     <>
       {/* Conditionally Render HomeModel or AboutModel */}
-      {category === 'Home' && (
+  
         <Modal
-          title={getModalTitle()}
+          title={'Add New ' + category}
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -99,95 +88,29 @@ export default function HomeModel({ isModalVisible, handleCancel }) {
                 onChange={(e) => setNewDescription(e.target.value)}
               />
             </Col>
-
+            {category === 'Home' &&
             <Col xs={24}>
-              <Upload
-                name="image"
-                listType="picture-card"
-                showUploadList={{ showRemoveIcon: true }}
-                action="/upload"
-                onChange={handleImageChange}
-                accept="image/*"
-              >
-                {newImage ? (
-                  <img src={newImage} alt="Selected" width={80} />
-                ) : (
-                  <div>
-                    <UploadOutlined /> Upload Image
-                  </div>
-                )}
-              </Upload>
-            </Col>
+            <Upload
+              name="image"
+              listType="picture-card"
+              showUploadList={{ showRemoveIcon: true }}
+              action="/upload"
+              onChange={handleImageChange}
+              accept="image/*"
+            >
+              {newImage ? (
+                <img src={newImage} alt="Selected" width={80} />
+              ) : (
+                <div>
+                  <UploadOutlined /> Upload Home Image
+                </div>
+              )}
+            </Upload>
+          </Col>
+            }
           </Row>
         </Modal>
-      )}
-
-      {/* Show AboutModel for 'About Us' category */}
-      {category === 'About Us' && (
-       <Modal
-       title={getModalTitle()}  // Dynamically set title based on category
-       visible={isModalVisible}
-       onOk={handleOk}
-       onCancel={handleCancel}
-       width="50%"
-       bodyStyle={{ padding: '20px' }}
-     >
-       <Row gutter={[16, 16]}>
-         <Col xs={24}>
-           <DropdownButton
-             style={{ width: '100%' }}
-             onCategoryChange={handleCategoryChange} // Update category when dropdown changes
-           />
-         </Col>
- 
-         <Col xs={24}>
-           <InputBox
-             label="Title"
-             name="title"
-             value={newTitle}
-             onChange={(e) => setNewTitle(e.target.value)}
-           />
-         </Col>
- 
-         <Col xs={24}>
-           <InputBox
-             label="Paragraph"
-             name="Paragraph"
-             value={newParagraph}
-             onChange={(e) => setnewParagraph(e.target.value)}
-           />
-         </Col>
- 
-         <Col xs={24}>
-           <TextareaBox
-             label="Description"
-             name="Description"
-             value={newDescription}
-             onChange={(e) => setNewDescription(e.target.value)}
-           />
-         </Col>
- 
-         <Col xs={24}>
-           <Upload
-             name="image"
-             listType="picture-card"
-             showUploadList={{ showRemoveIcon: true }}
-             action="/upload"
-             onChange={handleImageChange}
-             accept="image/*"
-           >
-             {newImage ? (
-               <img src={newImage} alt="Selected" width={80} />
-             ) : (
-               <div>
-                 <UploadOutlined /> Upload Image
-               </div>
-             )}
-           </Upload>
-         </Col>
-       </Row>
-     </Modal>
-      )}
+      
     </>
   );
 }
