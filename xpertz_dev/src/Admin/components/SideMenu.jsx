@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  DashboardOutlined,
   LogoutOutlined,
   UserOutlined,
   HomeOutlined,
@@ -13,24 +14,19 @@ import {
   IdcardOutlined,
 } from '@ant-design/icons';
 import { Menu, Layout } from 'antd';
-import { useNavigate } from 'react-router-dom';
 
 const { Sider } = Layout;
 
-const SideMenu = () => {
+const SideMenu = ({ onMenuClick }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate();
 
   const sidebarItems = [
-    { key: '/Adminhome', icon: <HomeOutlined />, label: 'Home' },
-    { key: '/about', icon: <InfoCircleOutlined />, label: 'About Us' },
-    { key: '/services', icon: <SettingOutlined />, label: 'Services' },
-    { key: '/portfolio', icon: <AppstoreAddOutlined />, label: 'Portfolio' },
-    { key: '/domains', icon: <GlobalOutlined />, label: 'Domains/Hosting' },
-    { key: '/business-sms', icon: <MessageOutlined />, label: 'Business SMS' },
-    { key: '/team', icon: <TeamOutlined />, label: 'Team' },
-    { key: '/clients', icon: <IdcardOutlined />, label: 'Our Clients' },
-    { key: '/contact', icon: <PhoneOutlined />, label: 'Contact' },
+    { key: 'Dashboard', icon: <DashboardOutlined />, label: 'Dashboard' }, // New Dashboard menu item
+    { key: 'AdHome', icon: <HomeOutlined />, label: 'Pages' },
+    { key: 'About', icon: <InfoCircleOutlined />, label: 'About Us' },
+    { key: 'Setting', icon: <SettingOutlined />, label: 'Setting' },
+    { key: 'logout', icon: <AppstoreAddOutlined />, label: 'Logout' },
+    
   ];
 
   return (
@@ -39,12 +35,14 @@ const SideMenu = () => {
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
       width={200}
+     
     >
       <Menu
+      style={{height:"500px"}}
         mode="inline"
-        defaultSelectedKeys={['/Adminhome']}
+        defaultSelectedKeys={['Dashboard']} // Set "Dashboard" as the default active item
         items={sidebarItems}
-        onClick={(menu) => navigate(menu.key)}
+        onClick={(menu) => onMenuClick(menu.key)} // Notify parent about selected item
       />
     </Sider>
   );
