@@ -44,17 +44,10 @@ export default function DomainHosting() {
     { feature: 'Sub-domains', details: '10' },
   ];
 
-  const platinumData = [
-    { feature: 'Disk Space', details: '10GB' },
-    { feature: 'Data Transfer', details: 'Unlimited' },
-    { feature: 'Database', details: '10' },
-    { feature: 'Emails', details: '20' },
-    { feature: 'Sub-domains', details: 'Unlimited' },
-  ];
+ 
 
   return (
-    <section id="domain" style={{ padding: '60px', backgroundColor: '#f0f2f5' }}>
-      
+    <section id="domain" style={{ padding: '60px 0', backgroundColor: '#f0f2f5' }}>
       <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
         Domain / Hosting
       </Title>
@@ -70,14 +63,19 @@ export default function DomainHosting() {
       >
         SELECT HOSTING PLANS ACCORDING TO YOUR NEEDS (Select Package with .com domain and hosting)
       </Text>
-      <Row gutter={[30, 30]} justify="center">
+      <Row
+        gutter={[10, 10]}
+        justify="center"
+        style={{ padding: '0 20px' }} // Padding applied to the left and right of the row
+      >
         {/* Popular Plan */}
-        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+        <Col xs={24} sm={12} md={8} lg={6} xl={6}>
           <Card
             title="Popular"
             bordered
             hoverable
-            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 9500 / Year</Text>}
+            extra={<Text strong style={{ fontSize: '16px' }}>Rs. 9500 / Year</Text>}
+            style={{ padding: '20px 30px' }} // Padding applied to the left and right inside the card
           >
             <Table
               columns={columns}
@@ -85,18 +83,20 @@ export default function DomainHosting() {
               pagination={false}
               showHeader={false}
               bordered
-              size="large"
+              size="middle"
+              scroll={{ x: 'max-content' }}
             />
           </Card>
         </Col>
 
         {/* Silver Plan */}
-        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+        <Col xs={24} sm={12} md={8} lg={6} xl={6}>
           <Card
             title="Silver"
             bordered
             hoverable
-            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 13500 / Year</Text>}
+            extra={<Text strong style={{ fontSize: '16px' }}>Rs. 13500 / Year</Text>}
+            style={{ padding: '20px 30px' }}
           >
             <Table
               columns={columns}
@@ -104,18 +104,20 @@ export default function DomainHosting() {
               pagination={false}
               showHeader={false}
               bordered
-              size="large"
+              size="middle"
+              scroll={{ x: 'max-content' }}
             />
           </Card>
         </Col>
 
         {/* Gold Plan */}
-        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+        <Col xs={24} sm={12} md={8} lg={6} xl={6}>
           <Card
             title="Gold"
             bordered
             hoverable
             extra={<Text strong style={{ fontSize: '20px' }}>Rs. 18500 / Year</Text>}
+            style={{ padding: '20px 30px' }}
           >
             <Table
               columns={columns}
@@ -123,31 +125,33 @@ export default function DomainHosting() {
               pagination={false}
               showHeader={false}
               bordered
-              size="large"
+              size="middle"
+              scroll={{ x: 'max-content' }}
             />
           </Card>
         </Col>
-
-        {/* Platinum Plan */}
-        <Col xs={24} sm={12} md={12} lg={8} xl={6}>
+{/* Gold Plan */}
+<Col xs={24} sm={12} md={8} lg={6} xl={6}>
           <Card
-            title="Platinum"
+            title="Gold"
             bordered
             hoverable
-            extra={<Text strong style={{ fontSize: '20px' }}>Rs. 25000 / Year</Text>}
+            extra={<Text strong style={{ fontSize: '16px' }}>Rs. 18500 / Year</Text>}
+            style={{ padding: '20px 30px' }}
           >
             <Table
               columns={columns}
-              dataSource={platinumData}
+              dataSource={goldData}
               pagination={false}
               showHeader={false}
               bordered
-              size="large"
+              size="middle"
+              scroll={{ x: 'max-content' }}
             />
           </Card>
         </Col>
+       
       </Row>
-
     </section>
   );
 }

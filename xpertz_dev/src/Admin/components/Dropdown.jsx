@@ -1,7 +1,7 @@
+// Dropdown.jsx
 import React, { useState } from 'react';
 import { Select } from 'antd';
 
-// The custom hook for Dropdown
 const useDropdown = () => {
   const [selectedValue, setSelectedValue] = useState(null);
 
@@ -9,24 +9,30 @@ const useDropdown = () => {
     setSelectedValue(value);
   };
 
-  const DropdownButton = ({ style, onCategoryChange }) => (
-    <Select
-      value={selectedValue}
-      style={style}
-      onChange={(value) => {
-        handleSelectChange(value);
-        onCategoryChange(value); // Pass selected category to parent
-      }}
-      placeholder="Select Category"
-      options={[
-        { label: 'Home', value: 'Home' },
-        { label: 'About Us', value: 'About Us' },
-        { label: 'services', value: 'Services' },
-        { label: 'portfolio', value: 'Portfolio' },
-        { label: 'Domains', value: 'Domains/Hosting' },
-        { label: 'business', value: 'Business/SMS' },
-      ]}
-    />
+  const DropdownButton = ({ label, placeholder, style, onCategoryChange }) => (
+    <div>
+      {label && <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>{label}</div>}
+      <Select
+        value={selectedValue}
+        placeholder={placeholder}
+        style={style}
+        onChange={(value) => {
+          handleSelectChange(value);
+          onCategoryChange(value); // Pass selected category to parent
+        }}
+        options={[
+          { label: 'Home', value: 'home' },
+          { label: 'About Us', value: 'aboutus' },
+          { label: 'Services', value: 'services' },
+          { label: 'Portfolio', value: 'portfolio' },
+          { label: 'Domains/Hosting', value: 'domains' },
+          { label: 'Business/SMS', value: 'business' },
+          { label: 'Team', value: 'team' },
+          { label: 'Our Clients', value: 'ourclients' },
+          { label: 'Contact', value: 'contact' },
+        ]}
+      />
+    </div>
   );
 
   return { DropdownButton };

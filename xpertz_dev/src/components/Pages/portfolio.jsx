@@ -69,18 +69,7 @@ export default function Portfolio() {
       <Title level={2} style={{ textAlign: 'center', color: '#1890ff' }}>
         My Portfolio
       </Title>
-      <Paragraph
-        type="secondary"
-        style={{
-          textAlign: 'center',
-          color: 'black',
-          display: 'block',
-          marginBottom: '20px',
-          fontSize: '20px',
-        }}
-      >
-        SELECT HOSTING PLANS ACCORDING TO YOUR NEEDS (Select Package with .com domain and hosting)
-      </Paragraph>
+      
       <Row gutter={[32, 32]} justify="center">
         {portfolioData.map((project, index) => (
           <Col xs={24} sm={12} md={8} lg={6} key={index}>

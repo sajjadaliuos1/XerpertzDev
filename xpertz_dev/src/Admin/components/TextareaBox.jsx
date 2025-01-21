@@ -4,7 +4,7 @@ import { Input } from 'antd';
 const TextareaBox = ({ label, name, value, onChange }) => {
   return (
     <div>
-      <label htmlFor={name} style={{ display: 'block', marginBottom: '8px' }}>
+      <label htmlFor={name} style={{ display: 'block',fontWeight: 'bold', marginBottom: '8px' }}>
         {label}
       </label>
       <Input.TextArea
