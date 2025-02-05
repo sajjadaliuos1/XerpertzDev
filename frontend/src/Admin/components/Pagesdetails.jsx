@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+
 import { Table, Button, Space, Popconfirm, message, Layout } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import HomeModel from './HomeModel'; // Import HomeModel
 
-const AdHome = () => {
+import { useState } from 'react';
+
+const Pagesdetails = () => {
   const [dataSource, setDataSource] = useState([
     {
       key: '1',
@@ -23,7 +25,7 @@ const AdHome = () => {
     },
   ]);
   
-  const [count, setCount] = useState(3);
+  
   const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
 
   const columns = [
@@ -128,4 +130,4 @@ const AdHome = () => {
   );
 };
 
-export default AdHome;
+export default Pagesdetails;

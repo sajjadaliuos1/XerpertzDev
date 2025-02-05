@@ -17,6 +17,7 @@ export default function Signup() {
     
             if (!response.ok) {
                 let result = await response.json();
+                localStorage.setItem("user".JSON.stringify(result));
                 throw new Error(result.error || "Registration failed.");
             }
     

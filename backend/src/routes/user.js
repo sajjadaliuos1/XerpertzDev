@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/login 
+// POST /////////api/login 
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -67,5 +67,38 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: "Internal server error." });
     }
 });
+
+
+
+// GET all users Api ///////////
+router.get("/userdetails", async (req, res) => {
+  try {
+    const users = await User.find(); // Fetch all users from the database
+    if (users.length > 0) {
+      res.send(users);
+    } else {
+      res.send({ result: "No User Found" });
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+////////Delete User Api //////////
+router.delete("/user/:id", async (req,resp)=>{
+    const result =  await User.deleteOne({_id:req.params.id});
+    resp.send(result);
+});
+//////////Update user Api for Update /////////
+router.put('/updateuser/:id',   async (req, resp) => {
+    const result = await User.updateOne(
+        { _id: req.params.id },
+        {
+            $set: req.body
+        }
+    );
+    resp.send(result);
+});
+
 
 module.exports = router;

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Row, Col, Card, Statistic, Table, Progress, Space } from 'antd';
+
+import { Row, Col, Card, Statistic,  Progress, Space } from 'antd';
 import { Line } from '@ant-design/plots';
 import {
   UserOutlined,

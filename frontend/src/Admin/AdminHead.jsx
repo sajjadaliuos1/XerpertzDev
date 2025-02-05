@@ -1,20 +1,33 @@
-
 import { Layout, Dropdown, Space, Typography, Menu } from 'antd';
-import { UserOutlined} from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 
-import logo from "./../assets/images/logo.png"; 
+import logo from "./../assets/images/logo.png";
 
 const { Header } = Layout;
 const { Text } = Typography;
 
 export default function AdminHead() {
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
+
+  // Logout function - moved above the return statement
+  const handleLogout = () => {
+    // Clear user data from local/session storage (if necessary)
+    localStorage.removeItem('user'); // Example of clearing user data from localStorage
+
+    // Redirect to the login page (or home page)
+    navigate('/login'); // Use navigate to redirect to login page
+
+    // Optional: You can also call an API to log out the user from the server.
+  };
+
   // Define the user menu dropdown
   const userMenu = (
     <Menu>
       <Menu.Item key="profile">
         <span>Profile</span>
       </Menu.Item>
-      <Menu.Item key="logout">
+      <Menu.Item key="logout" onClick={handleLogout}>
         <span>Logout</span>
       </Menu.Item>
     </Menu>
