@@ -90,15 +90,31 @@ router.delete("/user/:id", async (req,resp)=>{
     resp.send(result);
 });
 //////////Update user Api for Update /////////
-router.put('/updateuser/:id',   async (req, resp) => {
-    const result = await User.updateOne(
-        { _id: req.params.id },
-        {
-            $set: req.body
-        }
-    );
-    resp.send(result);
-});
+router.put('/updateuser/:id', async (req, res) => {
+    try {
+        const { password, ...updateFields } = req.body;
+        const updateData = { ...updateFields };
 
+        // If password is provided, hash it before updating
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updateData.password = hashedPassword;
+        }
+
+        const result = await User.updateOne(
+            { _id: req.params.id },
+            { $set: updateData }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        res.json({ message: "User updated successfully!", result });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 module.exports = router;

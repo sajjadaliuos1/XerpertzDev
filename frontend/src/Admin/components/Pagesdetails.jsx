@@ -1,7 +1,7 @@
 
 import { Table, Button, Space, Popconfirm, message, Layout } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import HomeModel from './HomeModel'; // Import HomeModel
+import HomeModel from './PagesModel'; // Import HomeModel
 
 import { useState } from 'react';
 

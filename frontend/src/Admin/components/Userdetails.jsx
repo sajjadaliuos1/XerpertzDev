@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Table, Input, Button, Space, Popconfirm, message, Modal, Form } from 'antd';
+import { Table, Input, Button, Space, Popconfirm, message, Modal, Form,Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { AllUsers, DeleteUser, UpdateUser } from '../../Api/routes';
+import { AllUsers, DeleteUser, UpdateUser, registerUser } from '../../Api/User';
+
 
 const UserDetails = () => {
+ 
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -62,11 +64,10 @@ const UserDetails = () => {
     setEditingUser(user);
     setModalVisible(true);
 
-    // Set old password for editing (decrypted from the backend, if stored in plain text)
     form.setFieldsValue({
       ...user,
-      password: user ? user.password : '', // Show existing password if user is available
-      confirmPassword: '' // Reset confirm password field
+      password: '', // Keep password empty when editing
+      confirmPassword: '',
     });
   };
 
@@ -79,29 +80,43 @@ const UserDetails = () => {
 
   // Handle form submission (Create/Update user)
   const handleFinish = async (values) => {
-    if (!editingUser) {
-      message.error('User ID is missing');
-      return;
-    }
-
-    const userData = { ...values };
-    // Remove confirmPassword field before submitting
-    delete userData.confirmPassword;
-
     try {
-      await UpdateUser(editingUser._id, userData);
-      message.success('User updated successfully');
-      fetchUsers();
-      handleModalCancel();
+      if (!editingUser) {
+        // Register a new user
+        const response = await registerUser(values);
+
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.error || 'Registration failed.');
+        }
+
+        message.success('User registered successfully!');
+        form.resetFields();
+        fetchUsers();
+        handleModalCancel();
+      } else {
+        // Update existing user
+        const userData = { ...values };
+        delete userData.confirmPassword;
+
+        // Only update password if provided
+        if (!userData.password) {
+          delete userData.password;
+        }
+
+        await UpdateUser(editingUser._id, userData);
+        message.success('User updated successfully');
+        fetchUsers();
+        handleModalCancel();
+      }
     } catch (error) {
-      message.error(`Error: ${error.message}`);
+      message.error(error.message || 'User ID is missing');
     }
   };
 
   // Table columns
   const columns = [
     { title: 'S.No', dataIndex: 'serial', key: 'serial' },
-    { title: 'ID', dataIndex: 'id', key: 'id' },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
 
@@ -110,16 +125,23 @@ const UserDetails = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
+        {/* Edit Button with Tooltip */}
+        <Tooltip title="Edit User">
           <Button icon={<EditOutlined />} onClick={() => showModal(record)} />
+        </Tooltip>
+      
+        {/* Delete Button with Tooltip */}
+        <Tooltip title="Delete User">
           <Popconfirm
-            title='Are you sure you want to delete this user?'
+            title="Are you sure you want to delete this user?"
             onConfirm={() => handleDelete(record._id)}
-            okText='Yes'
-            cancelText='No'
+            okText="Yes"
+            cancelText="No"
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
-        </Space>
+        </Tooltip>
+      </Space>
       ),
     },
   ];
@@ -167,10 +189,10 @@ const UserDetails = () => {
           {/* Password Field */}
           <Form.Item
             name='password'
-            label='Password'
+            label='New Password'
             rules={[{ required: false, message: 'Please enter a password' }]}
           >
-            <Input.Password />
+            <Input.Password placeholder='Leave empty to keep current password' />
           </Form.Item>
 
           {/* Confirm Password Field */}
@@ -190,7 +212,7 @@ const UserDetails = () => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password placeholder='Confirm new password' />
           </Form.Item>
 
           <Form.Item>

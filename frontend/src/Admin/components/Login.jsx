@@ -2,7 +2,7 @@ import { Form, Input, Button, Checkbox, Typography, Layout, Row, Col, message } 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../../Api/routes';
+import { login } from '../../Api/User';
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
