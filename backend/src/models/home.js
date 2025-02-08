@@ -8,4 +8,4 @@ const HomeSchema = new mongoose.Schema({
     image: { type: String, required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model("homepage", HomeSchema, 'homepage');
+module.exports = mongoose.model("Home", HomeSchema);
