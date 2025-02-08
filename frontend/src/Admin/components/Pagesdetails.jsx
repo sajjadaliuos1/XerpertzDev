@@ -1,33 +1,58 @@
-
-import { Table, Button, Space, Popconfirm, message, Layout } from 'antd';
+import { Table, Button, Space, Popconfirm, message, Layout, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import HomeModel from './PagesModel'; // Import HomeModel
+import { homeDetails } from '../../Api/home';
+import { useState, useEffect } from 'react';
 
-import { useState } from 'react';
+const { Content } = Layout;
+const { Search } = Input;
 
 const Pagesdetails = () => {
-  const [dataSource, setDataSource] = useState([
-    {
-      key: '1',
-      title: 'Sample Title 1',
-      Paragraph: 'dffdsfsdfd',
-      description: 'Description for title 1',
-      Category: 'Home',
-      image: 'https://via.placeholder.com/100',
-    },
-    {
-      key: '2',
-      title: 'Sample Title 2',
-      description: 'Description for title 2',
-      Paragraph: 'dffdsfsdfd',
-      Category: 'About us',
-      image: 'https://via.placeholder.com/100',
-    },
-  ]);
-  
-  
-  const [isModalOpen, setIsModalOpen] = useState(false); // Track modal visibility
+  const [data, setData] = useState([]); // Store original data
+  const [filteredData, setFilteredData] = useState([]); // Store filtered data
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch all home details
+  const fetchPagesDetails = async () => {
+    try {
+      const response = await homeDetails();
+      const result = await response.json();
+      const formattedData = result.map((item, index) => ({
+        ...item,
+        key: index + 1, // Add a unique key
+      }));
+      setData(formattedData);
+      setFilteredData(formattedData);
+    } catch (error) {
+      message.error('Failed to fetch data');
+      console.error('Fetch error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPagesDetails();
+  }, []);
+
+  // Search function
+  const handleSearch = (value) => {
+    const filtered = data.filter((item) =>
+      item.title.toLowerCase().includes(value.toLowerCase()) ||
+      item.description.toLowerCase().includes(value.toLowerCase()) ||
+      item.paragraph?.toLowerCase().includes(value.toLowerCase()) ||
+      item.category?.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
+  // Delete function
+  const handleDelete = (key) => {
+    const newData = filteredData.filter((item) => item.key !== key);
+    setData(newData);
+    setFilteredData(newData);
+    message.success('Deleted successfully');
+  };
+
+  // Define table columns
   const columns = [
     {
       title: 'Title',
@@ -37,8 +62,8 @@ const Pagesdetails = () => {
     },
     {
       title: 'Paragraph',
-      dataIndex: 'Paragraph',
-      key: 'Paragraph',
+      dataIndex: 'paragraph', // Ensure lowercase "p"
+      key: 'paragraph',
       ellipsis: true,
     },
     {
@@ -51,12 +76,12 @@ const Pagesdetails = () => {
       title: 'Image',
       dataIndex: 'image',
       key: 'image',
-      render: (text) => <img src={text} alt="example" width="80" />,
+      render: (text) => <img src={'text'} alt="example" width="80" />,
     },
     {
       title: 'Category',
-      dataIndex: 'Category',
-      key: 'Category',
+      dataIndex: 'category', // Ensure lowercase "c"
+      key: 'category',
       ellipsis: true,
     },
     {
@@ -71,27 +96,12 @@ const Pagesdetails = () => {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} type="danger" />
+            <Button icon={<DeleteOutlined />} danger />
           </Popconfirm>
         </Space>
       ),
     },
   ];
-
-  const handleDelete = (key) => {
-    setDataSource(dataSource.filter((item) => item.key !== key));
-    message.success('Deleted successfully');
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true); // Open the modal
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false); // Close the modal
-  };
-
-  const { Content } = Layout;
 
   return (
     <Content
@@ -104,28 +114,38 @@ const Pagesdetails = () => {
       }}
     >
       <div>
+        {/* Search Input */}
+        <Search
+          placeholder="Search by title, description, category..."
+          allowClear
+          enterButton="Search"
+          onSearch={handleSearch}
+          style={{ marginBottom: 16, width: '50%' }}
+        />
+
+        {/* Add New Button */}
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={showModal} // Open the modal on button click
-          style={{ marginBottom: 16 }}
+          onClick={() => setIsModalOpen(true)}
+          style={{ marginBottom: 16, marginLeft: 16 }}
         >
           Add New
         </Button>
 
+        {/* Data Table */}
         <Table
           columns={columns}
-          dataSource={dataSource}
-          pagination={false}
+          dataSource={filteredData} // Use filtered data
+          pagination={{ pageSize: 5 }} // Add pagination
           rowKey="key"
           bordered
           size="small"
-          responsive
         />
       </div>
 
       {/* HomeModel Modal */}
-      <HomeModel isModalVisible={isModalOpen} handleCancel={handleModalClose} />
+      <HomeModel isModalVisible={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
     </Content>
   );
 };
