@@ -1,7 +1,7 @@
-import { Table, Button, Space, Popconfirm, message, Layout, Input } from 'antd';
+import { Table, Button, Space, Popconfirm, message, Layout, Input, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import HomeModel from './PagesModel'; // Import HomeModel
-import { homeDetails } from '../../Api/home';
+import PagesModel from './PagesModel'; // Import PagesModel
+import { homeDetails, DeleteHome } from '../../Api/Home';
 import { useState, useEffect } from 'react';
 
 const { Content } = Layout;
@@ -11,18 +11,15 @@ const Pagesdetails = () => {
   const [data, setData] = useState([]); // Store original data
   const [filteredData, setFilteredData] = useState([]); // Store filtered data
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null); // Track selected record for editing
 
   // Fetch all home details
   const fetchPagesDetails = async () => {
     try {
       const response = await homeDetails();
       const result = await response.json();
-      const formattedData = result.map((item, index) => ({
-        ...item,
-        key: index + 1, // Add a unique key
-      }));
-      setData(formattedData);
-      setFilteredData(formattedData);
+      setData(result);
+      setFilteredData(result);
     } catch (error) {
       message.error('Failed to fetch data');
       console.error('Fetch error:', error);
@@ -45,63 +42,25 @@ const Pagesdetails = () => {
   };
 
   // Delete function
-  const handleDelete = (key) => {
-    const newData = filteredData.filter((item) => item.key !== key);
-    setData(newData);
-    setFilteredData(newData);
-    message.success('Deleted successfully');
+  const handleDelete = async (id) => {
+    try {
+      const result = await DeleteHome(id);
+      if (result.ok) {
+        message.warning('Record deleted successfully');
+        fetchPagesDetails();
+      } else {
+        message.error('Failed to delete record');
+      }
+    } catch (error) {
+      message.error(`Error: ${error.message}`);
+    }
   };
 
-  // Define table columns
-  const columns = [
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-      ellipsis: true,
-    },
-    {
-      title: 'Paragraph',
-      dataIndex: 'paragraph', // Ensure lowercase "p"
-      key: 'paragraph',
-      ellipsis: true,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-    },
-    {
-      title: 'Image',
-      dataIndex: 'image',
-      key: 'image',
-      render: (text) => <img src={'text'} alt="example" width="80" />,
-    },
-    {
-      title: 'Category',
-      dataIndex: 'category', // Ensure lowercase "c"
-      key: 'category',
-      ellipsis: true,
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button icon={<EditOutlined />} type="primary" />
-          <Popconfirm
-            title="Are you sure you want to delete?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button icon={<DeleteOutlined />} danger />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+  // Handle Edit
+  const handleEdit = (record) => {
+    setSelectedRecord(record); // Set selected record for editing
+    setIsModalOpen(true);
+  };
 
   return (
     <Content
@@ -127,7 +86,7 @@ const Pagesdetails = () => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { setIsModalOpen(true); setSelectedRecord(null); }}
           style={{ marginBottom: 16, marginLeft: 16 }}
         >
           Add New
@@ -135,17 +94,61 @@ const Pagesdetails = () => {
 
         {/* Data Table */}
         <Table
-          columns={columns}
-          dataSource={filteredData} // Use filtered data
-          pagination={{ pageSize: 5 }} // Add pagination
-          rowKey="key"
+          columns={[
+            { title: 'S.No', key: 'serialNumber', render: (_, __, index) => index + 1 },
+            { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
+            { title: 'Paragraph', dataIndex: 'paragraph', key: 'paragraph', ellipsis: true },
+            { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
+            {
+              title: 'Image',
+              dataIndex: 'image',
+              key: 'image',
+              render: (_, record) => (
+                <img
+                  src={`http://localhost:5000/api/img/${record._id}`}
+                  alt="image"
+                  width="80"
+                  height="50"
+                  style={{ objectFit: 'cover', borderRadius: '5px' }}
+                />
+              ),
+            },
+            { title: 'Category', dataIndex: 'category', key: 'category', ellipsis: true },
+            {
+              title: 'Actions',
+              key: 'actions',
+              render: (_, record) => (
+                <Space size="middle">
+                  <Tooltip title="Edit">
+                    <Button icon={<EditOutlined />} onClick={() => handleEdit(record._id)} />
+                  </Tooltip>
+                  <Popconfirm
+                    title="Are you sure you want to delete?"
+                    onConfirm={() => handleDelete(record._id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button icon={<DeleteOutlined />} danger />
+                  </Popconfirm>
+                </Space>
+              ),
+            },
+          ]}
+          dataSource={filteredData}
+          pagination={{ pageSize: 5 }}
+          rowKey="_id"
           bordered
           size="small"
         />
       </div>
 
       {/* HomeModel Modal */}
-      <HomeModel isModalVisible={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
+      <PagesModel
+        isModalVisible={isModalOpen}
+        handleCancel={() => setIsModalOpen(false)}
+        initialData={selectedRecord}
+        refreshData={fetchPagesDetails}
+      />
     </Content>
   );
 };

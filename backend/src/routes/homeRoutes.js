@@ -1,10 +1,11 @@
 const express = require("express");
-const Home = require("../models/Home");
+const path = require("path"); // Required for image path handling
+const Home = require("../models/Home"); // Ensure correct import
 const upload = require("../middleware/upload");
-
+const fs = require("fs"); 
 const router = express.Router();
 
-// Add Home Content
+// ✅ Add Home Content
 router.post("/addhome", upload.single("image"), async (req, res) => {
   try {
     console.log("Received File:", req.file); // Debugging
@@ -13,19 +14,17 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
       return res.status(400).json({ error: "Please upload an image!" });
     }
 
-    // Process form data
     const { category, title, paragraph, description } = req.body;
     if (!category || !title || !paragraph || !description) {
       return res.status(400).json({ error: "All fields are required!" });
     }
 
-    // Save to database
     const home = new Home({
       category,
       title,
       paragraph,
       description,
-      image: `/assets/${req.file.filename}`,
+      image: `${req.file.filename}`, 
     });
 
     await home.save();
@@ -53,5 +52,77 @@ router.get("/homedetails", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+///////get image/////
+router.get("/img/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const image = await Home.findById(id);
 
+    if (!image) {
+      return res.status(404).json({ message: "No image found" });
+    }
+
+    // ✅ Ensure correct image path
+    const imagePath = path.join(__dirname, "../../public/assets", image.image);
+    
+    // ✅ Check if file exists before sending
+    if (!fs.existsSync(imagePath)) {
+      return res.status(404).json({ message: "Image file not found" });
+    }
+
+    res.sendFile(imagePath);
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    res.status(500).json({ error: "Unable to fetch image" });
+  }
+});
+//////Delete Home data Api
+router.delete("/home/:id", async (req, res) => {
+    await Home.deleteOne({ _id: req.params.id });
+    res.json({ message: "HomeData deleted successfully" });
+});
+//////get one record HomeData Api for Updation////
+router.get("/gethome/:id",async (req, resp) => {
+  try {
+      const homeId = req.params.id;
+      
+      if (!homeId || homeId === "undefined") {
+          return resp.status(400).send({ error: "Invalid Home ID" });
+      }
+
+      // Ensure it's a valid ObjectId before querying
+      const result = await Home.findOne({ _id: homeId });
+
+      if (result) {
+          resp.send(result);
+      } else {
+          resp.status(404).send({ result: "Home not found." });
+      }
+  } catch (error) {
+      console.error("Error in fetching Home:", error);
+      resp.status(500).send({ error: "Server error" });
+  }
+});
+////// HomeData Api for Updation////
+router.put("/updatehome/:id", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, paragraph, description, category } = req.body;
+    let updateData = { title, paragraph, description, category };
+
+    if (req.file) {
+      updateData.image = `../../public/assets/${req.file.filename}`;
+    }
+
+    const updatedHome = await Home.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedHome) {
+      return res.status(404).json({ error: "Home not found" });
+    }
+
+    res.json({ message: "Home updated successfully", home: updatedHome });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update home" });
+  }
+});
 module.exports = router;

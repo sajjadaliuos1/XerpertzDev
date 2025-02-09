@@ -1,5 +1,5 @@
+const BASE_URL = "http://localhost:5000/api/img";
 export const addHome = async (payload) => {
-
   const response = await fetch("http://localhost:5000/api/addhome", {
     method: "POST",
     body: payload, // No need for JSON.stringify()
@@ -11,3 +11,33 @@ export const addHome = async (payload) => {
     const response = await fetch('http://localhost:5000/api/homedetails');
     return response;
   };
+  // Delete Home Data API function
+export const DeleteHome = async (id) => {
+  const response = await fetch(`http://localhost:5000/api/home/${id}`, {
+   method: 'DELETE', // DELETE method to delete the user
+ });
+ return response;
+ };
+//////get one record for updation/////
+export const getHomeById = async (id) => {
+  try {
+    const response = await fetch(`http://localhost:5000/api/gethome/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+ /////////////Update Home///////////
+ export async function updateHome(id, formData) {
+  return fetch(`${BASE_URL}/home/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+}

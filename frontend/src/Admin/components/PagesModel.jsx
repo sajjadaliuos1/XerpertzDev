@@ -1,88 +1,166 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Row, Col, Button, Form, Input, Upload, message } from "antd";
 import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
-import { addHome } from "../../Api/home";
+import { addHome, updateHome, getHomeById } from "../../Api/Home";
 
-export default function PagesModel({ isModalVisible, handleCancel }) {
+export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [category, setCategory] = useState('home');
+  const [loading, setLoading] = useState(false);
+  const isEditing = Boolean(initialData);
+
+  // Load initial data when editing
+  useEffect(() => {
+    const fetchData = async () => {
+      if (initialData) {
+        setLoading(true);
+        try {
+          const response = await getHomeById(initialData);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          
+          form.setFieldsValue({
+            title: data.title || "",
+            paragraph: data.paragraph || "",
+            description: data.description || "",
+            features: data.features || [{ feature: "" }],
+            category: data.category || "home"
+          });
+          
+          setCategory(data.category?.toLowerCase() || 'home');
+          
+          if (data._id) {
+            setFileList([{
+              uid: '-1',
+              name: 'Current Image',
+              status: 'done',
+              url: `http://localhost:5000/api/img/${data._id}`
+            }]);
+          }
+        } catch (error) {
+          console.error('Error fetching record:', error);
+          message.error('Failed to fetch record details. Please try again.');
+          handleCancel();
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [initialData, form, handleCancel]);
+
+  // Reset form when category changes (only for new records)
+  useEffect(() => {
+    if (!initialData) {
+      form.setFieldsValue({
+        title: "",
+        paragraph: "",
+        description: "",
+        features: [{ feature: "" }]
+      });
+    }
+  }, [category, form, initialData]);
 
   const handleImageChange = ({ fileList: newFileList }) => {
-    // Limit to only one file if needed
     setFileList(newFileList);
   };
 
-  // Handle Form Submission
   const handleFinish = async (values) => {
-    if (fileList.length < 1) {
+    if (!isEditing && fileList.length < 1) {
       message.error("Please upload an image!");
-      return true;
+      return;
     }
 
+    setLoading(true);
     const payload = new FormData();
     payload.append("category", category);
     payload.append("title", values?.title ?? "");
     payload.append("paragraph", values?.paragraph ?? "");
     payload.append("description", values?.description ?? "");
-    console.log(values)
-    // Handle multiple files if needed
-    fileList.forEach((file, index) => {
+
+    // Only append file if it's a new upload (has originFileObj)
+    fileList.forEach((file) => {
       if (file.originFileObj) {
         payload.append(`image`, file.originFileObj);
       }
     });
+
     try {
-      const response = await addHome(payload);
+      let response;
+      if (isEditing) {
+        response = await updateHome(initialData, payload);
+      } else {
+        response = await addHome(payload);
+      }
       
-      // Assuming response is a Response object
       if (!response.ok) {
         const result = await response.json();
-        throw new Error(result.error || "Home Adding failed.");
+        throw new Error(result.error || `${isEditing ? 'Update' : 'Add'} operation failed.`);
       }
 
-      message.success("Home Added successfully!");
+      message.success(`${isEditing ? 'Updated' : 'Added'} successfully!`);
       form.resetFields();
-      setFileList([]); // Reset file list
-      handleCancel(); // Close modal after success
+      setFileList([]);
+      refreshData();
+      handleCancel();
     } catch (error) {
-      message.error(error.message || "An error occurred while adding the page.");
+      console.error('Operation error:', error);
+      message.error(error.message || `An error occurred while ${isEditing ? 'updating' : 'adding'} the page.`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Configuration for image upload
   const uploadProps = {
     beforeUpload: (file) => {
-      // Validate file type
       const isImage = file.type.startsWith('image/');
       if (!isImage) {
         message.error('You can only upload image files!');
         return Upload.LIST_IGNORE;
       }
-      // Validate file size (e.g., 5MB limit)
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isLt5M) {
         message.error('Image must be smaller than 5MB!');
         return Upload.LIST_IGNORE;
       }
-      return false; // Prevent automatic upload
+      return false;
     },
     fileList,
     onChange: handleImageChange,
-    multiple: false, // Set to true if you want to allow multiple files
+    multiple: false,
+  };
+
+  const shouldShowTitle = () => {
+    return !["team", "ourclients"].includes(category.toLowerCase());
+  };
+
+  const shouldShowParagraph = () => {
+    return !["aboutus", "services", "portfolio", "domains", "business", "team", "ourclients"].includes(
+      category.toLowerCase()
+    );
+  };
+
+  const shouldShowDescription = () => {
+    return !["domains", "team", "ourclients"].includes(category.toLowerCase());
   };
 
   return (
     <Modal
-      title={`Add New ${form.getFieldValue("category") || "Page"}`}
+      title={`${isEditing ? 'Edit' : 'Add New'} ${category.charAt(0).toUpperCase() + category.slice(1)}`}
       open={isModalVisible}
       onCancel={handleCancel}
       width="50%"
       bodyStyle={{ padding: "20px" }}
       footer={null}
+      confirmLoading={loading}
     >
       <Form
         form={form}
@@ -97,35 +175,30 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
         }}
       >
         <Row gutter={[16, 16]}>
-          {/* Category Dropdown */}
           <Col xs={24}>
             <DropdownButton
               name="category"
               label="Select Category"
               placeholder="Select Page"
               style={{ width: "100%" }}
-              onCategoryChange={(value) => {
-                setCategory(value)
-              }}
+              onCategoryChange={setCategory}
+              defaultValue={category}
             />
           </Col>
 
-          {/* Title Field */}
-          {form.getFieldValue("category") !== "team" &&
-            form.getFieldValue("category") !== "ourclients" && (
-              <Col xs={24}>
-                <Form.Item
-                  name="title"
-                  label="Title"
-                  rules={[{ required: true, message: "Please enter a title!" }]}
-                >
-                  <Input placeholder="Enter Title" />
-                </Form.Item>
-              </Col>
-            )}
+          {shouldShowTitle() && (
+            <Col xs={24}>
+              <Form.Item
+                name="title"
+                label="Title"
+                rules={[{ required: true, message: "Please enter a title!" }]}
+              >
+                <Input placeholder="Enter Title" />
+              </Form.Item>
+            </Col>
+          )}
 
-          {/* Dynamic Features List */}
-          {form.getFieldValue("category") === "domains" && (
+          {category.toLowerCase() === "domains" && (
             <Col xs={24}>
               <Form.List name="features">
                 {(fields, { add, remove }) => (
@@ -161,10 +234,7 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
             </Col>
           )}
 
-          {/* Paragraph Field */}
-          {!["aboutus", "services", "portfolio", "domains", "business", "team", "ourclients"].includes(
-            form.getFieldValue("category")
-          ) && (
+          {shouldShowParagraph() && (
             <Col xs={24}>
               <Form.Item name="paragraph" label="Paragraph">
                 <Input.TextArea placeholder="Enter Paragraph" />
@@ -172,8 +242,7 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
             </Col>
           )}
 
-          {/* Description Field */}
-          {!["domains", "team", "ourclients"].includes(form.getFieldValue("category")) && (
+          {shouldShowDescription() && (
             <Col xs={24}>
               <Form.Item name="description" label="Description">
                 <Input.TextArea placeholder="Enter Description" />
@@ -181,12 +250,11 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
             </Col>
           )}
 
-          {/* Image Upload Field with Preview */}
           <Col xs={24}>
             <Form.Item
               label="Upload Image"
-              required
-              rules={[{ required: true, message: "Please upload an image!" }]}
+              required={!isEditing}
+              rules={[{ required: !isEditing, message: "Please upload an image!" }]}
             >
               <Upload
                 {...uploadProps}
@@ -203,11 +271,15 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
           </Col>
         </Row>
 
-        {/* Submit Button */}
         <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-              Submit
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              style={{ width: "100%" }}
+              loading={loading}
+            >
+              {isEditing ? 'Update' : 'Submit'}
             </Button>
           </Col>
         </Row>
@@ -219,4 +291,6 @@ export default function PagesModel({ isModalVisible, handleCancel }) {
 PagesModel.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleCancel: PropTypes.func.isRequired,
+  initialData: PropTypes.string,
+  refreshData: PropTypes.func.isRequired,
 };
