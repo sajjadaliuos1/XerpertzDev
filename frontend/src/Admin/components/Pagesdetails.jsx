@@ -13,13 +13,20 @@ const Pagesdetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null); // Track selected record for editing
 
-  // Fetch all home details
+  // Fetch all page details (Home & About)
   const fetchPagesDetails = async () => {
     try {
       const response = await homeDetails();
       const result = await response.json();
-      setData(result);
-      setFilteredData(result);
+
+      // Combine homepage and aboutpage data into a single list
+      const combinedData = [
+        ...result.homepage.map((item) => ({ ...item, category: 'Home' })), // Label Home data
+        ...result.aboutpage.map((item) => ({ ...item, category: 'AboutUs' })), // Label About data
+      ];
+
+      setData(combinedData);
+      setFilteredData(combinedData);
     } catch (error) {
       message.error('Failed to fetch data');
       console.error('Fetch error:', error);
@@ -32,11 +39,12 @@ const Pagesdetails = () => {
 
   // Search function
   const handleSearch = (value) => {
-    const filtered = data.filter((item) =>
-      item.title.toLowerCase().includes(value.toLowerCase()) ||
-      item.description.toLowerCase().includes(value.toLowerCase()) ||
-      item.paragraph?.toLowerCase().includes(value.toLowerCase()) ||
-      item.category?.toLowerCase().includes(value.toLowerCase())
+    const filtered = data.filter(
+      (item) =>
+        item.title.toLowerCase().includes(value.toLowerCase()) ||
+        item.description.toLowerCase().includes(value.toLowerCase()) ||
+        item.paragraph?.toLowerCase().includes(value.toLowerCase()) ||
+        item.category?.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -86,7 +94,10 @@ const Pagesdetails = () => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => { setIsModalOpen(true); setSelectedRecord(null); }}
+          onClick={() => {
+            setIsModalOpen(true);
+            setSelectedRecord(null);
+          }}
           style={{ marginBottom: 16, marginLeft: 16 }}
         >
           Add New
@@ -142,7 +153,7 @@ const Pagesdetails = () => {
         />
       </div>
 
-      {/* HomeModel Modal */}
+      {/* PagesModel Modal */}
       <PagesModel
         isModalVisible={isModalOpen}
         handleCancel={() => setIsModalOpen(false)}

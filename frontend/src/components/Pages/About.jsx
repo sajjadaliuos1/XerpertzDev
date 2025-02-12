@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Typography, Row, Col, Image } from 'antd';
 import download from "../../assets/images/download.png";
 const { Title, Paragraph } = Typography;

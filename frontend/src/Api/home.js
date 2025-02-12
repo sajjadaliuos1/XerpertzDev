@@ -1,7 +1,7 @@
-import { Token } from './Helper.js';
-const BASE_URL = "http://localhost:5000/api/";
+import { Token,BASE_URL  } from './Helper.js';
+
 export const addHome = async (payload) => {
-  const response = await fetch("http://localhost:5000/api/addhome", {
+  const response = await fetch(`${BASE_URL}/addhome`, {
     method: "POST",
     body: payload, // No need for JSON.stringify()
   });
@@ -9,12 +9,12 @@ export const addHome = async (payload) => {
 };
 ////////////Home Details///////////
   export const homeDetails  = async () => {
-    const response = await fetch('http://localhost:5000/api/homedetails',Token);
+    const response = await fetch(`${BASE_URL}/Pagesdetails`,Token);
     return response;
   };
   // Delete Home Data API function
 export const DeleteHome = async (id) => {
-  const response = await fetch(`http://localhost:5000/api/home/${id}`, {
+  const response = await fetch(`${BASE_URL}/home/${id}`, {
    method: 'DELETE', // DELETE method to delete the user
    ...Token,
  });

@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path"); // Required for image path handling
-const Home = require("../models/Home"); // Ensure correct import
+const Home = require("../models/Home");
+const About = require("../models/About"); // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
@@ -34,38 +35,54 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-///////Home details///////////
+///////Pages details///////////
 // Ensure this is correctly imported
 
 // Get all homepage data
-router.get("/homedetails", verifyToken, async (req, res) => {
-    try {
-        const homepageData = await Home.find(); // Ensure the correct model name is used
+router.get("/Pagesdetails", verifyToken, async (req, res) => {
+  try {
+      // Fetch data from both collections
+      const homepageData = await Home.find(); // Fetch data from Home table
+      const aboutPageData = await About.find(); // Fetch data from About table
 
-        if (!homepageData.length) {
-            return res.status(404).json({ message: "No data found" });
-        }
+      // Check if both have data
+      if (!homepageData.length && !aboutPageData.length) {
+          return res.status(404).json({ message: "No data found" });
+      }
 
-        res.status(200).json(homepageData);
-    } catch (error) {
-        console.error("Error fetching homepage data:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+      // Send combined response
+      res.status(200).json({
+          homepage: homepageData,
+          aboutpage: aboutPageData
+      });
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
 });
+
 ///////get image/////
-router.get("/img/:id",  async (req, res) => {
+router.get("/img/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const image = await Home.findById(id);
 
-    if (!image) {
+    // Try finding the image in the Home collection first
+    let imageRecord = await Home.findById(id);
+
+    //  If not found in Home, check the About collection
+    if (!imageRecord) {
+      imageRecord = await About.findById(id);
+    }
+
+    //  If no record found in either collection
+    if (!imageRecord || !imageRecord.image) {
       return res.status(404).json({ message: "No image found" });
     }
 
-    // ✅ Ensure correct image path
-    const imagePath = path.join(__dirname, "../../public/assets", image.image);
-    
-    // ✅ Check if file exists before sending
+    //  Ensure correct image path
+    const imagePath = path.join(__dirname, "../../public/assets", imageRecord.image);
+
+    //  Check if file exists before sending
     if (!fs.existsSync(imagePath)) {
       return res.status(404).json({ message: "Image file not found" });
     }
@@ -78,29 +95,52 @@ router.get("/img/:id",  async (req, res) => {
 });
 //////Delete Home data Api
 router.delete("/home/:id", verifyToken, async (req, res) => {
-    await Home.deleteOne({ _id: req.params.id });
-    res.json({ message: "HomeData deleted successfully" });
+  try {
+    const { id } = req.params;
+
+    //  Try deleting from the Home collection first
+    let deletedData = await Home.findByIdAndDelete(id);
+    //  If not found in Home, try deleting from About
+    if (!deletedData) {
+      deletedData = await About.findByIdAndDelete(id);
+    }
+    //  If no record was found in either collection
+    if (!deletedData) {
+      return res.status(404).json({ message: "No record found to delete" });
+    }
+
+    res.json({ message: "Data deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    res.status(500).json({ error: "Unable to delete data" });
+  }
 });
 //////get one record HomeData Api for Updation////
-router.get("/gethome/:id", verifyToken,async (req, resp) => {
+router.get("/gethome/:id", verifyToken, async (req, resp) => {
   try {
-      const homeId = req.params.id;
-      
-      if (!homeId || homeId === "undefined") {
-          return resp.status(400).send({ error: "Invalid Home ID" });
-      }
+    const { id } = req.params;
 
-      // Ensure it's a valid ObjectId before querying
-      const result = await Home.findOne({ _id: homeId });
+    if (!id || id === "undefined") {
+      return resp.status(400).json({ error: "Invalid ID" });
+    }
 
-      if (result) {
-          resp.send(result);
-      } else {
-          resp.status(404).send({ result: "Home not found." });
-      }
+    //  Try to find in Home collection first
+    let result = await Home.findById(id);
+
+    //  If not found in Home, check About collection
+    if (!result) {
+      result = await About.findById(id);
+    }
+
+    //  If not found in either collection
+    if (!result) {
+      return resp.status(404).json({ error: "Record not found" });
+    }
+
+    resp.status(200).json(result);
   } catch (error) {
-      console.error("Error in fetching Home:", error);
-      resp.status(500).send({ error: "Server error" });
+    console.error("Error fetching record:", error);
+    resp.status(500).json({ error: "Server error" });
   }
 });
 ////// HomeData Api for Updation////

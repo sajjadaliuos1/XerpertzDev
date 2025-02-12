@@ -4,7 +4,7 @@ import { Modal, Row, Col, Button, Form, Input, Upload, message } from "antd";
 import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
-
+import { addAbout,updateAbout} from "../../Api/About";
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
   const [form] = Form.useForm();
@@ -78,34 +78,39 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       message.error("Please upload an image!");
       return;
     }
-
+  
     setLoading(true);
     const payload = new FormData();
     payload.append("category", category);
     payload.append("title", values?.title ?? "");
     payload.append("paragraph", values?.paragraph ?? "");
     payload.append("description", values?.description ?? "");
-
-    // Only append file if it's a new upload (has originFileObj)
+  
+    // ✅ Append file only if it's newly uploaded
     fileList.forEach((file) => {
       if (file.originFileObj) {
         payload.append(`image`, file.originFileObj);
       }
     });
-
+  
     try {
       let response;
-      if (isEditing) {
-        response = await updateHome(initialData, payload);
+  
+      if (category.toLowerCase() === "aboutus") {
+        response = isEditing 
+          ? await updateAbout(initialData, payload) 
+          : await addAbout(payload);
       } else {
-        response = await addHome(payload);
+        response = isEditing 
+          ? await updateHome(initialData, payload) 
+          : await addHome(payload);
       }
-      
+  
       if (!response.ok) {
         const result = await response.json();
         throw new Error(result.error || `${isEditing ? 'Update' : 'Add'} operation failed.`);
       }
-
+  
       message.success(`${isEditing ? 'Updated' : 'Added'} successfully!`);
       form.resetFields();
       setFileList([]);
@@ -118,6 +123,8 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       setLoading(false);
     }
   };
+  
+  
 
   const uploadProps = {
     beforeUpload: (file) => {
@@ -143,13 +150,13 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   };
 
   const shouldShowParagraph = () => {
-    return !["aboutus", "services", "portfolio", "domains", "business", "team", "ourclients"].includes(
+    return ![ "services", "portfolio", "domains", "business", "team", "ourclients"].includes(
       category.toLowerCase()
     );
   };
 
   const shouldShowDescription = () => {
-    return !["domains", "team", "ourclients"].includes(category.toLowerCase());
+    return !["domains","aboutus", "team", "ourclients"].includes(category.toLowerCase());
   };
 
   return (
