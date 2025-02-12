@@ -1,19 +1,10 @@
-import React from "react";
-import {
-  Layout,
-  Button,
-  Row,
-  Col,
-  Typography,
-  Space,
-  List,
-  Image,
-} from "antd";
+import { useState, useEffect } from "react";
+import { Layout, Button, Row, Col, Typography, Space, Image, message, List } from "antd";
 import { EyeOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import workspace from "../../assets/images/workspace.png";
+import { homeDetails } from '../../Api/Home';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 const textAnimation = {
   hidden: { opacity: 0, y: 50 },
@@ -26,52 +17,59 @@ const imageAnimation = {
 };
 
 export default function Home() {
+  const [data, setData] = useState(null);
+
+  const fetchPagesDetails = async () => {
+    try {
+      const response = await homeDetails();
+      const result = await response.json();
+
+      if (Array.isArray(result) && result.length > 0) {
+        setData(result[0]);
+      } else {
+        setData(result);
+      }
+
+      console.log("Fetched Data:", result); // Debugging
+
+    } catch (error) {
+      message.error("Failed to fetch data");
+      console.error("Fetch error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPagesDetails();
+  }, []);
+
   return (
     <Layout>
-     
-      <section id="home" style={{  padding:"50px",backgroundColor: "#1890ff" }}>
-        <Row
-          justify="center"
-          align="middle"
-          style={{
-            backgroundColor: "#1890ff",
-          }}
-        >
+      <section id="home" style={{ padding: "50px", backgroundColor: "#1890ff" }}>
+        <Row justify="center" align="middle">
           {/* Text Section */}
           <Col xs={24} md={12}>
-            <Space
-              direction="vertical"
-              size="small"
-              style={{ marginLeft: "16px" }}
-            >
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={textAnimation}
-              >
+            <Space direction="vertical" size="small" style={{ marginLeft: "16px" }}>
+              <motion.div initial="hidden" animate="visible" variants={textAnimation}>
                 <Title level={2} style={{ color: "#fff", fontSize: "40px" }}>
-                  Unlock <span style={{ color: "#fff" }}>Innovation</span> with
-                  the BEST IT Solution in Swat
+                  {data ? data.title : "Loading..."}
                 </Title>
               </motion.div>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={textAnimation}
-              >
+              <motion.div initial="hidden" animate="visible" variants={textAnimation}>
                 <Paragraph style={{ color: "#fff", fontSize: "16px" }}>
-                  We deliver cutting-edge solutions tailored to your needs,
-                  ensuring exceptional user experiences across all platforms.
+                  {data ? data.paragraph : "Loading..."}
                 </Paragraph>
               </motion.div>
+
+              {/* ✅ Fixed List Section */}
               <motion.div initial="hidden" animate="visible" variants={textAnimation}>
                 <List
-                  dataSource={[
-                    "Your Success is Our Success",
-                    "Passionate About Software Development",
-                    "We Listen, We Work Together",
-                    "Responsive Solutions for All Devices",
-                  ]}
+                  dataSource={
+                    data?.description
+                      ? Array.isArray(data.description)
+                        ? data.description
+                        : data.description.split("\n") // Convert string to an array
+                      : []
+                  }
                   renderItem={(item) => (
                     <List.Item style={{ padding: "0" }}>
                       <List.Item.Meta
@@ -84,48 +82,37 @@ export default function Home() {
                       />
                     </List.Item>
                   )}
+                  locale={{ emptyText: "No Data Available" }} // Show message if no data
                 />
               </motion.div>
 
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={textAnimation}
-              >
+              <motion.div initial="hidden" animate="visible" variants={textAnimation}>
                 <Button
                   type="primary"
                   icon={<EyeOutlined />}
                   size="middle"
                   href="#services"
-                  style={{
-                    backgroundColor: "#fff",
-                    color: "#1890ff",
-                    borderColor: "#fff",
-                    marginBottom: "16px",
-                  }}
+                  style={{ backgroundColor: "#fff", color: "#1890ff", borderColor: "#fff", marginBottom: "16px" }}
                 >
                   Learn More
                 </Button>
               </motion.div>
             </Space>
           </Col>
+
           {/* Image Section */}
           <Col xs={24} md={12}>
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={imageAnimation}
-            >
-              <Image
-                src={workspace}
-                alt="Workspace"
-                style={{
-                  maxWidth: "80%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                }}
-              />
+            <motion.div initial="hidden" animate="visible" variants={imageAnimation}>
+            <Image
+  src={data?.image ? `http://localhost:5000/api/img/${data._id}` : "default-image.jpg"}
+  alt="Workspace"
+  style={{
+    maxWidth: "80%",
+    height: "auto",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+  }}
+/>
             </motion.div>
           </Col>
         </Row>

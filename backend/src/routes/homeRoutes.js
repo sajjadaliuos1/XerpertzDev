@@ -4,7 +4,7 @@ const Home = require("../models/Home"); // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
-
+const { verifyToken } = require("../middleware/JwtToken");
 // ✅ Add Home Content
 router.post("/addhome", upload.single("image"), async (req, res) => {
   try {
@@ -38,7 +38,7 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
 // Ensure this is correctly imported
 
 // Get all homepage data
-router.get("/homedetails", async (req, res) => {
+router.get("/homedetails", verifyToken, async (req, res) => {
     try {
         const homepageData = await Home.find(); // Ensure the correct model name is used
 
@@ -53,7 +53,7 @@ router.get("/homedetails", async (req, res) => {
     }
 });
 ///////get image/////
-router.get("/img/:id", async (req, res) => {
+router.get("/img/:id",  async (req, res) => {
   try {
     const { id } = req.params;
     const image = await Home.findById(id);
@@ -77,12 +77,12 @@ router.get("/img/:id", async (req, res) => {
   }
 });
 //////Delete Home data Api
-router.delete("/home/:id", async (req, res) => {
+router.delete("/home/:id", verifyToken, async (req, res) => {
     await Home.deleteOne({ _id: req.params.id });
     res.json({ message: "HomeData deleted successfully" });
 });
 //////get one record HomeData Api for Updation////
-router.get("/gethome/:id",async (req, resp) => {
+router.get("/gethome/:id", verifyToken,async (req, resp) => {
   try {
       const homeId = req.params.id;
       
@@ -104,7 +104,7 @@ router.get("/gethome/:id",async (req, resp) => {
   }
 });
 ////// HomeData Api for Updation////
-router.put("/updatehome/:id", upload.single("image"), async (req, res) => {
+router.put("/updatehome/:id", verifyToken, upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, paragraph, description, category } = req.body;

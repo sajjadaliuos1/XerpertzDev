@@ -12,24 +12,38 @@ export default function Signup() {
     const [form] = Form.useForm();
   
     const onFinish = async (values) => {
-        try {
-            let response = await registerUser(values);
-    
-            if (!response.ok) {
-                let result = await response.json();
-                localStorage.setItem("user".JSON.stringify(result));
-                throw new Error(result.error || "Registration failed.");
-            }
-    
-           
-            message.success('Registration successful! Redirecting to login...');
-            form.resetFields();
-            navigate('/admin'); 
-    
-        } catch (error) {
-            message.error(error.message);
-        }
-    };
+      try {
+          let response = await registerUser(values);
+  
+          if (!response.ok) {
+              let result = await response.json();
+              throw new Error(result.error || "Registration failed.");
+          }
+  
+          let userData = await response.json();
+          console.log("User Data Received:", userData); // Debugging
+  
+          // Ensure the response contains user and token
+          if (!userData.user || !userData.token) {
+              throw new Error("Invalid response from server. Missing user or token.");
+          }
+  
+          // Store in localStorage
+          localStorage.setItem("User", JSON.stringify(userData.user));
+          localStorage.setItem("token", userData.token);
+  
+          console.log("Stored User:", localStorage.getItem("User"));
+          console.log("Stored Token:", localStorage.getItem("token"));
+  
+          message.success("Registration successful! Redirecting...");
+          form.resetFields();
+          navigate("/admin");
+      } catch (error) {
+          message.error(error.message);
+      }
+  };
+  
+  
     
 
   return (

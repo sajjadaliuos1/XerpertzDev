@@ -24,22 +24,24 @@ export default function Login() {
 
   const onFinish = async (values) => {
     try {
-      let response = await login(values.email, values.password); // passing email and password
-
-      if (!response.ok) {
-        let result = await response.json();
-        throw new Error(result.error || "Login failed.");
+      let response = await login(values.email, values.password); // Call login API
+  
+      if (!response || !response.auth) {
+        throw new Error(response?.error || "Login failed.");
       }
-
-      // On successful login
+  
+      // Store user details and token in local storage
+      localStorage.setItem('User', JSON.stringify(response.user));
+      localStorage.setItem('token', response.auth); // No need for JSON.stringify
+  
       message.success('Login successful! Redirecting to Dashboard...');
       form.resetFields();
-      navigate('/dashboard'); // redirect to dashboard
-
+      navigate('/dashboard');
     } catch (error) {
-      message.error(error.message); // display error message
+      message.error(error.message); // Display error message
     }
   };
+  
 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#f0f2f5', overflowX: 'hidden' }}>

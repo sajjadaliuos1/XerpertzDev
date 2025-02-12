@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-
 const router = express.Router();
+const { generateToken, verifyToken } = require("../middleware/JwtToken");
 
 // Register User
 router.post('/register', async (req, res) => {
@@ -22,17 +22,28 @@ router.post('/register', async (req, res) => {
         const newUser = new User({ name, email, password: hashedPassword });
         await newUser.save();
 
-        res.status(201).json({ message: "User registered successfully!" });
+        const token = generateToken(newUser);
+
+        // ✅ Return the user object along with the token
+        res.status(201).json({
+            message: "User registered successfully!",
+            user: {
+                _id: newUser._id,
+                name: newUser.name,
+                email: newUser.email
+            },
+            token
+        });
     } catch (error) {
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
+
 // Login User
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password are required." });
         }
@@ -47,14 +58,16 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: "Invalid credentials." });
         }
 
-        res.status(200).json({ user: { _id: user._id, name: user.name, email: user.email } });
+        const token = generateToken(user);
+        res.status(200).json({ user: { _id: user._id, name: user.name, email: user.email }, auth: token });
     } catch (error) {
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
+
 // Get All Users
-router.get("/userdetails", async (req, res) => {
+router.get("/userdetails",verifyToken, async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);
@@ -64,13 +77,13 @@ router.get("/userdetails", async (req, res) => {
 });
 
 // Delete User
-router.delete("/user/:id", async (req, res) => {
+router.delete("/user/:id",verifyToken, async (req, res) => {
     await User.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted successfully" });
 });
 
 // Update User
-router.put('/updateuser/:id', async (req, res) => {
+router.put('/updateuser/:id', verifyToken, async (req, res) => {
     try {
         const { password, ...updateFields } = req.body;
         if (password) {
