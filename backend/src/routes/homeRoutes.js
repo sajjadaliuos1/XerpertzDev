@@ -144,7 +144,7 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
   }
 });
 ////// HomeData Api for Updation////
-router.put("/updatehome/:id", verifyToken, upload.single("image"), async (req, res) => {
+router.put("/updatehome/:id",  upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
     const { title, paragraph, description, category } = req.body;

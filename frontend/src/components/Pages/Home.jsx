@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Layout, Button, Row, Col, Typography, Space, Image, message, List } from "antd";
 import { EyeOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import { homeDetails } from '../../Api/Home';
+import {  homeDetails } from '../../Api/Home';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -23,20 +23,23 @@ export default function Home() {
     try {
       const response = await homeDetails();
       const result = await response.json();
-
-      if (Array.isArray(result) && result.length > 0) {
-        setData(result[0]);
-      } else {
-        setData(result);
-      }
-
-      console.log("Fetched Data:", result); // Debugging
-
+      
+      console.log("Full API Response:", result); // Debugging
+  
+      // Make sure we're accessing 'homepage' correctly
+      const homeData = result?.homepage?.length > 0 ? result.homepage[0] : null;
+  
+      console.log("Filtered Home Data:", homeData); // Debugging
+  
+      setData(homeData);
     } catch (error) {
       message.error("Failed to fetch data");
       console.error("Fetch error:", error);
     }
   };
+  
+  
+  
 
   useEffect(() => {
     fetchPagesDetails();

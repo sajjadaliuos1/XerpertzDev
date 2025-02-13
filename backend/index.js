@@ -13,7 +13,7 @@ app.use("/public", express.static(path.join(__dirname, "/public/assets")));
 app.use('/api', require('./src/routes/UserRoutes'));
 app.use('/api', require('./src/routes/HomeRoutes'));
 app.use('/api', require('./src/routes/AboutRoutes'));
-
+app.use('/api', require('./src/routes/ServicesRoutes'));
 
 app.listen(5000, () => {
     console.log("Server is running on port 5000");

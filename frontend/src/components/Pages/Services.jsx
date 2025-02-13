@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Row, Col, Progress, Tabs, Typography, Card, Tooltip, Space } from "antd";
 import { FaGlobe, FaImage, FaCalendarAlt, FaSearch, FaAndroid } from "react-icons/fa";
 

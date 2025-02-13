@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 // Middleware to generate a JWT token
 const generateToken = (user) => {
     return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-        expiresIn: '2h'
+
     });
 };
 
