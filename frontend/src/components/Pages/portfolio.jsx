@@ -1,5 +1,5 @@
-import React from 'react';
-import { Layout, Row, Col, Card, Button, Typography, Tooltip } from 'antd';
+
+import { Row, Col, Card, Button, Typography, Tooltip } from 'antd';
 import { GithubOutlined, LinkOutlined, AppstoreAddOutlined } from '@ant-design/icons';
 
 const { Title, Paragraph } = Typography;

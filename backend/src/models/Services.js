@@ -4,7 +4,7 @@ const ServiceSchema = new mongoose.Schema(
     {
         category: { type: String, required: true },
         title: { type: String, required: true },
-        paragraph: { type: String },
+        description: { type: String },
         image: { type: String, required: true },
     },
     { timestamps: true }

@@ -1,7 +1,9 @@
 const express = require("express");
 const path = require("path"); // Required for image path handling
 const Home = require("../models/Home");
-const About = require("../models/About"); // Ensure correct import
+const About = require("../models/About"); 
+const Services = require("../models/Services");
+const Portfolio = require("../models/Portfolio"); // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
@@ -41,19 +43,23 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
 // Get all homepage data
 router.get("/Pagesdetails", verifyToken, async (req, res) => {
   try {
-      // Fetch data from both collections
-      const homepageData = await Home.find(); // Fetch data from Home table
-      const aboutPageData = await About.find(); // Fetch data from About table
+      // Fetch data from all collections
+      const homepageData = await Home.find(); 
+      const aboutPageData = await About.find(); 
+      const servicesPageData = await Services.find();
+      const portfoliopageData = await Portfolio.find(); // Fetch data from Portfolio collection
 
-      // Check if both have data
-      if (!homepageData.length && !aboutPageData.length) {
+      // Check if all collections have data
+      if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfolioData.length) {
           return res.status(404).json({ message: "No data found" });
       }
 
       // Send combined response
       res.status(200).json({
           homepage: homepageData,
-          aboutpage: aboutPageData
+          aboutpage: aboutPageData,
+          servicespage: servicesPageData,
+          portfoliopage: portfoliopageData
       });
   } catch (error) {
       console.error("Error fetching data:", error);
@@ -61,28 +67,27 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
   }
 });
 
+
 ///////get image/////
 router.get("/img/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Try finding the image in the Home collection first
-    let imageRecord = await Home.findById(id);
+    // Check for image in different collections
+    let imageRecord =
+      (await Home.findById(id)) ||
+      (await About.findById(id)) ||
+      (await Services.findById(id)) ||
+      (await Portfolio.findById(id)); // Now checking Portfolio table
 
-    //  If not found in Home, check the About collection
-    if (!imageRecord) {
-      imageRecord = await About.findById(id);
-    }
-
-    //  If no record found in either collection
     if (!imageRecord || !imageRecord.image) {
       return res.status(404).json({ message: "No image found" });
     }
 
-    //  Ensure correct image path
+    // Construct the correct image path
     const imagePath = path.join(__dirname, "../../public/assets", imageRecord.image);
 
-    //  Check if file exists before sending
+    // Check if file exists before sending
     if (!fs.existsSync(imagePath)) {
       return res.status(404).json({ message: "Image file not found" });
     }
@@ -98,13 +103,14 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    //  Try deleting from the Home collection first
-    let deletedData = await Home.findByIdAndDelete(id);
-    //  If not found in Home, try deleting from About
-    if (!deletedData) {
-      deletedData = await About.findByIdAndDelete(id);
-    }
-    //  If no record was found in either collection
+    // Try deleting from each collection
+    let deletedData =
+      (await Home.findByIdAndDelete(id)) ||
+      (await About.findByIdAndDelete(id)) ||
+      (await Services.findByIdAndDelete(id)) ||
+      (await Portfolio.findByIdAndDelete(id)); // Now deleting from Portfolio too
+
+    // If no record was found in any collection
     if (!deletedData) {
       return res.status(404).json({ message: "No record found to delete" });
     }
@@ -115,6 +121,8 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
     res.status(500).json({ error: "Unable to delete data" });
   }
 });
+
+
 //////get one record HomeData Api for Updation////
 router.get("/gethome/:id", verifyToken, async (req, resp) => {
   try {
@@ -124,15 +132,14 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       return resp.status(400).json({ error: "Invalid ID" });
     }
 
-    //  Try to find in Home collection first
-    let result = await Home.findById(id);
+    // Try to find in each collection
+    let result =
+      (await Home.findById(id)) ||
+      (await About.findById(id)) ||
+      (await Services.findById(id)) ||
+      (await Portfolio.findById(id)); // Now checking Portfolio too
 
-    //  If not found in Home, check About collection
-    if (!result) {
-      result = await About.findById(id);
-    }
-
-    //  If not found in either collection
+    // If not found in any collection
     if (!result) {
       return resp.status(404).json({ error: "Record not found" });
     }
@@ -143,6 +150,7 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
     resp.status(500).json({ error: "Server error" });
   }
 });
+
 ////// HomeData Api for Updation////
 router.put("/updatehome/:id",  upload.single("image"), async (req, res) => {
   try {
