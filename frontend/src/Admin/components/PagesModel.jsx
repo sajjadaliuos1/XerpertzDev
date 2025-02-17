@@ -4,8 +4,9 @@ import { Modal, Row, Col, Button, Form, Input, Upload, message } from "antd";
 import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
-import { addAbout,updateAbout} from "../../Api/About";
-import { addServices,updateServices,addPortfolio } from "../../Api/Services";
+import { addAbout, updateAbout } from "../../Api/About";
+import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain } from "../../Api/PagesApi";
+
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
   const [form] = Form.useForm();
@@ -24,9 +25,9 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.statusText}`);
           }
-          
+
           const data = await response.json();
-          
+
           form.setFieldsValue({
             title: data.title || "",
             paragraph: data.paragraph || "",
@@ -34,9 +35,9 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             features: data.features || [{ feature: "" }],
             category: data.category || "home"
           });
-          
+
           setCategory(data.category?.toLowerCase() || 'home');
-          
+
           if (data._id) {
             setFileList([{
               uid: '-1',
@@ -75,9 +76,10 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   };
 
   const handleFinish = async (values) => {
+    console.log(values);
     if (!isEditing && fileList.length < 1) {
-        message.error("Please upload an image!");
-        return;
+      message.error("Please upload an image!");
+      return;
     }
 
     setLoading(true);
@@ -86,56 +88,60 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
     payload.append("title", values?.title ?? "");
 
     if (category.toLowerCase() === "portfolio") {
-        payload.append("githuburl", values?.GitHubUrl ?? "");  // Fix field name
-        payload.append("livedemo", values?.LiveDemo ?? "");  // Fix field name
+      payload.append("githuburl", values?.GitHubUrl ?? "");  // Fix field name
+      payload.append("livedemo", values?.LiveDemo ?? "");  // Fix field name
+    } else if (category.toLowerCase() === "domains") {
+      // Collect domain features
+      payload.append("features", JSON.stringify(values?.features ?? []));
+
     } else {
-        payload.append("paragraph", values?.paragraph ?? "");
+      payload.append("paragraph", values?.paragraph ?? "");
     }
-    
+
     payload.append("description", values?.description ?? "");
 
     fileList.forEach((file) => {
-        if (file.originFileObj) {
-            payload.append("image", file.originFileObj);
-        }
+      if (file.originFileObj) {
+        payload.append("image", file.originFileObj);
+      }
     });
 
     console.log("Payload Data Before Sending:", Object.fromEntries(payload.entries())); // Debugging
 
     try {
-        let response;
-        if (category.toLowerCase() === "portfolio") {
-            response = await addPortfolio(payload);
-        } else if (category.toLowerCase() === "aboutus") {
-            response = isEditing ? await updateAbout(initialData, payload) : await addAbout(payload);
-        } else if (category.toLowerCase() === "services") {
-            response = isEditing ? await updateServices(initialData, payload) : await addServices(payload);
-        } else {
-            response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
-        }
+      let response;
+      if (category.toLowerCase() === "portfolio") {
+        response = isEditing ? await updatePortfolio(initialData, payload) : await addPortfolio(payload);
+      } else if (category.toLowerCase() === "aboutus") {
+        response = isEditing ? await updateAbout(initialData, payload) : await addAbout(payload);
+      } else if (category.toLowerCase() === "services") {
+        response = isEditing ? await updateServices(initialData, payload) : await addServices(payload);
+      } else if (category.toLowerCase() === "domains") {
+        response =  addDomain(payload);
+        console.log("domain", response);
+      } else {
+        response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
+      }
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (!response.ok) {
-            console.error("Backend Error:", result);
-            throw new Error(result.error || "Operation failed.");
-        }
+      if (!response.ok) {
+        console.error("Backend Error:", result);
+        throw new Error(result.error || "Operation failed.");
+      }
 
-        message.success(`${isEditing ? "Updated" : "Added"} successfully!`);
-        form.resetFields();
-        setFileList([]);
-        refreshData();
-        handleCancel();
+      message.success(`${isEditing ? "Updated" : "Added"} successfully!`);
+      form.resetFields();
+      setFileList([]);
+      refreshData();
+      handleCancel();
     } catch (error) {
-        console.error("Operation error:", error);
-        message.error(error.message || "An error occurred.");
+      console.error("Operation error:", error);
+      message.error(error.message || "An error occurred.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
-  
-  
+  };
 
   const uploadProps = {
     beforeUpload: (file) => {
@@ -209,23 +215,23 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               <Form.Item
                 name="title"
                 label="Title"
-                rules={[{ required: true, message: "Please enter a title!" }]}
-              >
+                rules={[{ required: true, message: "Please enter a title!" }]} >
                 <Input placeholder="Enter Title" />
               </Form.Item>
             </Col>
           )}
- {category.toLowerCase() === "portfolio" && (
-             <Col xs={24}>
-            <Form.Item name="GitHubUrl" label="GitHub Url">
-  <Input placeholder="Enter GitHub Url" />
-</Form.Item>
-<Form.Item name="LiveDemo" label="Live Demo">
-  <Input placeholder="Enter Live Demo" />
-</Form.Item>
-           </Col>
-           
+
+          {category.toLowerCase() === "portfolio" && (
+            <Col xs={24}>
+              <Form.Item name="GitHubUrl" label="GitHub Url">
+                <Input placeholder="Enter GitHub Url" />
+              </Form.Item>
+              <Form.Item name="LiveDemo" label="Live Demo">
+                <Input placeholder="Enter Live Demo" />
+              </Form.Item>
+            </Col>
           )}
+
           {category.toLowerCase() === "domains" && (
             <Col xs={24}>
               <Form.List name="features">
@@ -238,8 +244,7 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
                             {...restField}
                             name={[name, "feature"]}
                             label={`Feature ${key + 1}`}
-                            rules={[{ required: true, message: "Enter a feature" }]}
-                          >
+                            rules={[{ required: true, message: "Enter a feature" }]} >
                             <Input placeholder="Enter Feature" />
                           </Form.Item>
                         </Col>
@@ -278,17 +283,16 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             </Col>
           )}
 
-          <Col xs={24}>
-            <Form.Item
-              label="Upload Image"
-              required={!isEditing}
-              rules={[{ required: !isEditing, message: "Please upload an image!" }]}
-            >
+          {category.toLowerCase() !== "domains" && (
+            <Col xs={24}>
+             <Form.Item label="Upload Image">
               <Upload
                 {...uploadProps}
                 listType="picture-card"
+                fileList={fileList}
+                onChange={handleImageChange}
               >
-                {fileList.length < 1 && (
+                {fileList.length < 1 && category.toLowerCase() !== "domains" && (
                   <div>
                     <UploadOutlined />
                     <div style={{ marginTop: 8 }}>Upload</div>
@@ -296,17 +300,17 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
                 )}
               </Upload>
             </Form.Item>
-          </Col>
+            </Col>
+          )}
         </Row>
 
         <Row gutter={[16, 16]}>
           <Col xs={24}>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
+            <Button
+              type="primary"
+              htmlType="submit"
               style={{ width: "100%" }}
-              loading={loading}
-            >
+              loading={loading}>
               {isEditing ? 'Update' : 'Submit'}
             </Button>
           </Col>

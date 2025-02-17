@@ -3,7 +3,8 @@ const path = require("path"); // Required for image path handling
 const Home = require("../models/Home");
 const About = require("../models/About"); 
 const Services = require("../models/Services");
-const Portfolio = require("../models/Portfolio"); // Ensure correct import
+const Portfolio = require("../models/Portfolio");
+const Domain = require('../models/Domain'); // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
@@ -132,12 +133,13 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       return resp.status(400).json({ error: "Invalid ID" });
     }
 
-    // Try to find in each collection
+    // Try to find in each collection, now including DomainHostingPages
     let result =
       (await Home.findById(id)) ||
       (await About.findById(id)) ||
       (await Services.findById(id)) ||
-      (await Portfolio.findById(id)); // Now checking Portfolio too
+      (await Portfolio.findById(id)) ||
+      (await Domain.findById(id)); // Added DomainHostingPages collection check
 
     // If not found in any collection
     if (!result) {
@@ -150,6 +152,7 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
     resp.status(500).json({ error: "Server error" });
   }
 });
+
 
 ////// HomeData Api for Updation////
 router.put("/updatehome/:id",  upload.single("image"), async (req, res) => {
