@@ -32,7 +32,7 @@ export const addPortfolio = async (payload) => {
      
     });
   }
-  //////////////// add Portfolio////////
+  //////////////// add Domain////////
 export const addDomain = async (payload) => {
   const response = await fetch("http://localhost:5000/api/addDomain", {
       method: "POST",
@@ -40,3 +40,29 @@ export const addDomain = async (payload) => {
   });
   return response;
 };
+/////////////Update Team page////
+export async function updateDomain(id, formData) {
+    
+  return fetch(`${BASE_URL}/updateDomain/${id}`, {
+    method: "PUT",
+    body: formData,
+   
+  });
+}
+////////////add Team api//////
+export const addTeam = async (payload) => {
+  const response = await fetch("http://localhost:5000/api/addTeam", {
+      method: "POST",
+      body: payload
+  });
+  return response;
+};
+/////////////Update Team page////
+export async function updateTeam(id, formData) {
+    
+  return fetch(`${BASE_URL}/updateTeam/${id}`, {
+    method: "PUT",
+    body: formData,
+   
+  });
+}

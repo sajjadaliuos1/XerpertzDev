@@ -24,7 +24,9 @@ const Pagesdetails = () => {
       ...(result.homepage || []).map((item) => ({ ...item, category: 'Home' })),
       ...(result.aboutpage || []).map((item) => ({ ...item, category: 'AboutUs' })),
       ...(result.servicespage || []).map((item) => ({ ...item, category: 'services' })),
-      ...(result. portfoliopage || []).map((item) => ({ ...item, category: 'portfolio' })), // Ensure correct key
+      ...(result. portfoliopage || []).map((item) => ({ ...item, category: 'portfolio' })),
+      ...(result. teampage || []).map((item) => ({ ...item, category: 'team' })),
+      ...(result. domainpage || []).map((item) => ({ ...item, category: 'domains' })),  // Ensure correct key
     ];
 
     console.log("Combined Data:", combinedData); // Debugging  
@@ -95,20 +97,41 @@ const Pagesdetails = () => {
           { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
           { title: 'Paragraph', dataIndex: 'paragraph', key: 'paragraph', ellipsis: true },
           { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
+          { title: 'Name', dataIndex: 'name', key: 'name', ellipsis: true },
+          { title: 'Role', dataIndex: 'role', key: 'role', ellipsis: true },
+          { 
+            title: 'Features', 
+            dataIndex: 'features', 
+            key: 'features', 
+            ellipsis: true,
+            render: (features) => {
+              if (Array.isArray(features)) {
+                return features.join(', ');
+              }
+              return features;
+            }
+          },
           {
             title: 'Image',
             dataIndex: 'image',
             key: 'image',
-            render: (_, record) => (
-              <img
-                src={`http://localhost:5000/api/img/${record._id}`}
-                alt="image"
-                width="80"
-                height="50"
-                style={{ objectFit: 'cover', borderRadius: '5px' }}
-              />
-            ),
-          },
+            render: (_, record) => {
+              // Don't render image for domains category
+              if (record.category?.toLowerCase() === 'domains') {
+                return 'N/A';
+              } 
+              return (
+                <img
+                  src={`http://localhost:5000/api/img/${record._id}`}
+                  alt="image"
+                  width="80"
+                  height="50"
+                  style={{ objectFit: 'cover', borderRadius: '5px' }}
+                />
+              );
+            
+          }, 
+        } ,
           { title: 'Category', dataIndex: 'category', key: 'category', ellipsis: true },
           {
             title: 'Actions',

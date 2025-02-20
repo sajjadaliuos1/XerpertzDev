@@ -5,7 +5,7 @@ import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
 import { addAbout, updateAbout } from "../../Api/About";
-import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain } from "../../Api/PagesApi";
+import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam } from "../../Api/PagesApi";
 
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
@@ -15,7 +15,6 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   const [loading, setLoading] = useState(false);
   const isEditing = Boolean(initialData);
 
-  // Load initial data when editing
   useEffect(() => {
     const fetchData = async () => {
       if (initialData) {
@@ -25,7 +24,6 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           if (!response.ok) {
             throw new Error(`Failed to fetch data: ${response.statusText}`);
           }
-
           const data = await response.json();
 
           form.setFieldsValue({
@@ -33,7 +31,13 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             paragraph: data.paragraph || "",
             description: data.description || "",
             features: data.features || [{ feature: "" }],
+            githuburl: data.githuburl || "",
+            livedemo: data.livedemo || "",
+            name: data.name || "",
+            role: data.role || "",
+            fblink: data.fblink || "",
             category: data.category || "home"
+            
           });
 
           setCategory(data.category?.toLowerCase() || 'home');
@@ -59,13 +63,17 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
     fetchData();
   }, [initialData, form, handleCancel]);
 
-  // Reset form when category changes (only for new records)
   useEffect(() => {
     if (!initialData) {
       form.setFieldsValue({
         title: "",
         paragraph: "",
         description: "",
+        githuburl:"",
+        livedemo:"",
+        name:"",
+        role:"",
+        fblink:"",
         features: [{ feature: "" }]
       });
     }
@@ -76,72 +84,84 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   };
 
   const handleFinish = async (values) => {
-    console.log(values);
-    if (!isEditing && fileList.length < 1) {
-      message.error("Please upload an image!");
+    if (category.toLowerCase() === "team" && fileList.length < 1) {
+      message.error("Please upload an image for the team member!");
       return;
     }
-
+  
+    console.log("Form Submitted Values:", values); // Debugging log
+  
     setLoading(true);
     const payload = new FormData();
     payload.append("category", category);
-    payload.append("title", values?.title ?? "");
-
+    payload.append("title", values.title || "");
+    payload.append("paragraph", values.paragraph || "");
+    payload.append("description", values.description || "");
+  
+    // Explicitly append GitHubUrl and LiveDemo for portfolio category
     if (category.toLowerCase() === "portfolio") {
-      payload.append("githuburl", values?.GitHubUrl ?? "");  // Fix field name
-      payload.append("livedemo", values?.LiveDemo ?? "");  // Fix field name
-    } else if (category.toLowerCase() === "domains") {
-      // Collect domain features
-      payload.append("features", JSON.stringify(values?.features ?? []));
-
-    } else {
-      payload.append("paragraph", values?.paragraph ?? "");
+      payload.append("githuburl", values.githuburl || "");  
+      payload.append("livedemo", values.livedemo || "");  
     }
-
-    payload.append("description", values?.description ?? "");
-
+    if (category.toLowerCase() === "domains") {
+      // Make sure features is properly formatted
+      const featuresArray = values.features 
+        ? values.features.map(f => f.feature).filter(feature => feature.trim() !== "")
+        : [];
+      
+      payload.append("features", JSON.stringify(featuresArray));
+    }
+    
+    
+    
+    if (category.toLowerCase() === "team") {
+      payload.append("name", values.name || "");
+      payload.append("role", values.role || "");
+      payload.append("fblink", values.fblink || "");
+    }
+  
     fileList.forEach((file) => {
       if (file.originFileObj) {
         payload.append("image", file.originFileObj);
       }
     });
-
-    console.log("Payload Data Before Sending:", Object.fromEntries(payload.entries())); // Debugging
-
+  
     try {
       let response;
-      if (category.toLowerCase() === "portfolio") {
-        response = isEditing ? await updatePortfolio(initialData, payload) : await addPortfolio(payload);
-      } else if (category.toLowerCase() === "aboutus") {
-        response = isEditing ? await updateAbout(initialData, payload) : await addAbout(payload);
-      } else if (category.toLowerCase() === "services") {
-        response = isEditing ? await updateServices(initialData, payload) : await addServices(payload);
-      } else if (category.toLowerCase() === "domains") {
-        response =  addDomain(payload);
-        console.log("domain", response);
-      } else {
-        response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
+      switch (category.toLowerCase()) {
+        case "portfolio":
+          response = isEditing ? await updatePortfolio(initialData, payload) : await addPortfolio(payload);
+          break;
+        case "aboutus":
+          response = isEditing ? await updateAbout(initialData, payload) : await addAbout(payload);
+          break;
+        case "services":
+          response = isEditing ? await updateServices(initialData, payload) : await addServices(payload);
+          break;
+        case "team":
+          response = isEditing ? await updateTeam(initialData, payload) : await addTeam(payload);
+          break;
+        case "domains":
+          response = isEditing ? await updateDomain(initialData, payload) : await addDomain(payload);
+          console.log(response);
+          break;
+        default:
+          response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
       }
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        console.error("Backend Error:", result);
-        throw new Error(result.error || "Operation failed.");
-      }
-
+  
+      if (!response.ok) throw new Error("Operation failed.");
       message.success(`${isEditing ? "Updated" : "Added"} successfully!`);
       form.resetFields();
       setFileList([]);
       refreshData();
       handleCancel();
     } catch (error) {
-      console.error("Operation error:", error);
       message.error(error.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   const uploadProps = {
     beforeUpload: (file) => {
@@ -195,6 +215,10 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           title: "",
           paragraph: "",
           description: "",
+          githuburl:"",
+          livedemo:"",
+          name:"",
+          fblink:"",
           features: [{ feature: "" }],
         }}
       >
@@ -223,38 +247,42 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
 
           {category.toLowerCase() === "portfolio" && (
             <Col xs={24}>
-              <Form.Item name="GitHubUrl" label="GitHub Url">
+              <Form.Item name="githuburl" label="GitHub Url">
                 <Input placeholder="Enter GitHub Url" />
               </Form.Item>
-              <Form.Item name="LiveDemo" label="Live Demo">
+              <Form.Item name="livedemo" label="Live Demo">
                 <Input placeholder="Enter Live Demo" />
+              </Form.Item>
+            </Col>
+          )}
+           {category.toLowerCase() === "team" && (
+            <Col xs={24}>
+              <Form.Item name="name" label="Name">
+                <Input placeholder="Enter Name" />
+              </Form.Item>
+              <Form.Item name="role" label="Role">
+                <Input placeholder="Enter Role" />
+              </Form.Item>
+              <Form.Item name="fblink" label="Facebook link">
+                <Input placeholder="Enter Facebook link" />
               </Form.Item>
             </Col>
           )}
 
           {category.toLowerCase() === "domains" && (
-            <Col xs={24}>
+              <Col xs={24}>
               <Form.List name="features">
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map(({ key, name, ...restField }) => (
                       <Row key={key} gutter={8} align="middle">
                         <Col flex="auto">
-                          <Form.Item
-                            {...restField}
-                            name={[name, "feature"]}
-                            label={`Feature ${key + 1}`}
-                            rules={[{ required: true, message: "Enter a feature" }]} >
+                          <Form.Item {...restField} name={[name, "feature"]} label={`Feature ${key + 1}`} rules={[{ required: true, message: "Enter a feature" }]}>
                             <Input placeholder="Enter Feature" />
                           </Form.Item>
                         </Col>
                         <Col>
-                          <Button
-                            type="text"
-                            icon={<MinusOutlined />}
-                            onClick={() => remove(name)}
-                            danger
-                          />
+                          <Button type="text" icon={<MinusOutlined />} onClick={() => remove(name)} danger />
                         </Col>
                       </Row>
                     ))}

@@ -4,11 +4,13 @@ const Home = require("../models/Home");
 const About = require("../models/About"); 
 const Services = require("../models/Services");
 const Portfolio = require("../models/Portfolio");
-const Domain = require('../models/Domain'); // Ensure correct import
+const Domain = require('../models/Domain');
+const Team = require('../models/Team');  // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
 const { verifyToken } = require("../middleware/JwtToken");
+
 // ✅ Add Home Content
 router.post("/addhome", upload.single("image"), async (req, res) => {
   try {
@@ -39,9 +41,9 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
   }
 });
 ///////Pages details///////////
-// Ensure this is correctly imported
 
-// Get all homepage data
+
+// Get all Pagesdetails data
 router.get("/Pagesdetails", verifyToken, async (req, res) => {
   try {
       // Fetch data from all collections
@@ -49,9 +51,11 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
       const aboutPageData = await About.find(); 
       const servicesPageData = await Services.find();
       const portfoliopageData = await Portfolio.find(); // Fetch data from Portfolio collection
-
+      const teamData = await Team.find(); 
+      const domainpageData = await Domain.find(); 
       // Check if all collections have data
-      if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfolioData.length) {
+      if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfoliopageData.length && 
+        !teamData.length,!domainpageData.length) {
           return res.status(404).json({ message: "No data found" });
       }
 
@@ -60,7 +64,9 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
           homepage: homepageData,
           aboutpage: aboutPageData,
           servicespage: servicesPageData,
-          portfoliopage: portfoliopageData
+          portfoliopage: portfoliopageData,
+          teampage:teamData,
+          domainpage:domainpageData
       });
   } catch (error) {
       console.error("Error fetching data:", error);
@@ -79,8 +85,8 @@ router.get("/img/:id", async (req, res) => {
       (await Home.findById(id)) ||
       (await About.findById(id)) ||
       (await Services.findById(id)) ||
-      (await Portfolio.findById(id)); // Now checking Portfolio table
-
+      (await Portfolio.findById(id))||  // Now checking Portfolio table
+      (await Team.findById(id));
     if (!imageRecord || !imageRecord.image) {
       return res.status(404).json({ message: "No image found" });
     }
@@ -109,7 +115,9 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
       (await Home.findByIdAndDelete(id)) ||
       (await About.findByIdAndDelete(id)) ||
       (await Services.findByIdAndDelete(id)) ||
-      (await Portfolio.findByIdAndDelete(id)); // Now deleting from Portfolio too
+      (await Portfolio.findByIdAndDelete(id)) ||  // Checking Portfolio table
+      (await Team.findByIdAndDelete(id)) ||  // 
+      (await Domain.findByIdAndDelete(id));  // Corrected this line
 
     // If no record was found in any collection
     if (!deletedData) {
@@ -124,6 +132,7 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
 });
 
 
+
 //////get one record HomeData Api for Updation////
 router.get("/gethome/:id", verifyToken, async (req, resp) => {
   try {
@@ -133,25 +142,30 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       return resp.status(400).json({ error: "Invalid ID" });
     }
 
-    // Try to find in each collection, now including DomainHostingPages
+    console.log("Searching for ID:", id);
+
     let result =
       (await Home.findById(id)) ||
       (await About.findById(id)) ||
       (await Services.findById(id)) ||
       (await Portfolio.findById(id)) ||
-      (await Domain.findById(id)); // Added DomainHostingPages collection check
+      (await Domain.findById(id)) ||
+      (await Team.findById(id))||  
+      (await Domain.findById(id));
 
-    // If not found in any collection
     if (!result) {
+      console.log("No record found in any collection.");
       return resp.status(404).json({ error: "Record not found" });
     }
 
+    console.log("Data found:", result);
     resp.status(200).json(result);
   } catch (error) {
     console.error("Error fetching record:", error);
     resp.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 ////// HomeData Api for Updation////
