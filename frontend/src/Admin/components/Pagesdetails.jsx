@@ -26,7 +26,8 @@ const Pagesdetails = () => {
       ...(result.servicespage || []).map((item) => ({ ...item, category: 'services' })),
       ...(result. portfoliopage || []).map((item) => ({ ...item, category: 'portfolio' })),
       ...(result. teampage || []).map((item) => ({ ...item, category: 'team' })),
-      ...(result. domainpage || []).map((item) => ({ ...item, category: 'domains' })),  // Ensure correct key
+      ...(result. domainpage || []).map((item) => ({ ...item, category: 'domains' })),
+      ...(result. clientpage || []).map((item) => ({ ...item, category: 'ourclients' })),  // Ensure correct key
     ];
 
     console.log("Combined Data:", combinedData); // Debugging  
@@ -97,7 +98,20 @@ const Pagesdetails = () => {
           { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
           { title: 'Paragraph', dataIndex: 'paragraph', key: 'paragraph', ellipsis: true },
           { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
-          { title: 'Name', dataIndex: 'name', key: 'name', ellipsis: true },
+          {
+            title: 'Name',
+            key: 'name',
+            ellipsis: true,
+            render: (_, record) => {
+              if (record.category === 'team') {
+                return record.name || 'N/A'; // Adjust according to your API response
+              }
+              if (record.category === 'ourclients') {
+                return record.clientname || 'N/A';
+              }
+              return 'N/A';
+            },
+          },
           { title: 'Role', dataIndex: 'role', key: 'role', ellipsis: true },
           { 
             title: 'Features', 

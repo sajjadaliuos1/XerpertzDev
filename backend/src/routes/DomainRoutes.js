@@ -44,7 +44,7 @@ router.post("/addDomain", upload.none(), async (req, res) => {
 });
 
 // Update Domain API
-router.put("/updateDomain/:id", async (req, res) => {
+router.put("/updateDomain/:id",upload.none(), async (req, res) => {
     try {
         const { id } = req.params;
         let { title, features, category } = req.body;

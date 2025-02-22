@@ -5,7 +5,8 @@ import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
 import { addAbout, updateAbout } from "../../Api/About";
-import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam } from "../../Api/PagesApi";
+import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam ,
+         addClient,updateClient            } from "../../Api/PagesApi";
 
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
@@ -30,12 +31,14 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             title: data.title || "",
             paragraph: data.paragraph || "",
             description: data.description || "",
-            features: data.features || [{ feature: "" }],
+            features: data.features?.length ? data.features.map(feature => ({ feature })) : [{ feature: "" }],
             githuburl: data.githuburl || "",
             livedemo: data.livedemo || "",
             name: data.name || "",
             role: data.role || "",
             fblink: data.fblink || "",
+            clientname: data.clientname || "",
+            projecturl: data.projecturl || "",
             category: data.category || "home"
             
           });
@@ -74,6 +77,8 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
         name:"",
         role:"",
         fblink:"",
+        clientname:"",
+        projecturl:"",
         features: [{ feature: "" }]
       });
     }
@@ -118,6 +123,10 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       payload.append("name", values.name || "");
       payload.append("role", values.role || "");
       payload.append("fblink", values.fblink || "");
+    }if (category.toLowerCase() === "ourclients") {
+      payload.append("clientname", values.clientname || "");
+      payload.append("projecturl", values.projecturl || "");
+      
     }
   
     fileList.forEach((file) => {
@@ -143,6 +152,10 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           break;
         case "domains":
           response = isEditing ? await updateDomain(initialData, payload) : await addDomain(payload);
+          console.log(response);
+          break;
+          case "ourclients":
+          response = isEditing ? await updateClient(initialData, payload) : await addClient(payload);
           console.log(response);
           break;
         default:
@@ -219,6 +232,8 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           livedemo:"",
           name:"",
           fblink:"",
+          clientname:"",
+          projecturl:"",
           features: [{ feature: "" }],
         }}
       >
@@ -268,7 +283,16 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-
+ {category.toLowerCase() === "ourclients" && (
+            <Col xs={24}>
+              <Form.Item name="clientname" label="Client Name">
+                <Input placeholder="client Name" />
+              </Form.Item>
+              <Form.Item name="projecturl" label="Project Url">
+                <Input placeholder="Project Url" />
+              </Form.Item>
+               </Col>
+          )}
           {category.toLowerCase() === "domains" && (
               <Col xs={24}>
               <Form.List name="features">

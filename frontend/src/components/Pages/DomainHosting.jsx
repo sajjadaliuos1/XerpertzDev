@@ -1,7 +1,7 @@
-import { Card, Col, Row, Typography, Table, message, Spin, Tag, Divider } from 'antd';
+import { Card, Col, Row, Typography, Table, message, Spin, Tag } from 'antd';
 import { homeDetails } from "../../Api/Home";
 import { useEffect, useState } from 'react';
-
+import { Button } from "antd";
 const { Title, Text, Paragraph } = Typography;
 
 export default function DomainHosting() {
@@ -34,13 +34,13 @@ export default function DomainHosting() {
   }, []);
 
   const getCardAccentColor = (title) => {
-    if (!title) return '#1890ff';
+    if (!title) return '#050504';
 
     const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes('gold') || lowerTitle.includes('premium')) return '#1E90FF';
-    if (lowerTitle.includes('silver') || lowerTitle.includes('business')) return '#808080';
-    if (lowerTitle.includes('bronze') || lowerTitle.includes('starter')) return '#A0522D';
-    return '#1890ff';
+    if (lowerTitle.includes('gold') || lowerTitle.includes('premium')) return '#050504';
+    if (lowerTitle.includes('silver') || lowerTitle.includes('business')) return '#050504';
+    if (lowerTitle.includes('bronze') || lowerTitle.includes('starter')) return '#050504';
+    return '#050504';
   };
 
   const prepareFeatureTableData = (features) => {
@@ -62,7 +62,7 @@ export default function DomainHosting() {
         </Title>
         <Paragraph style={{ fontSize: "16px", fontWeight: '500', color: '#555' }}>
           Select the best hosting plan for your needs.
-          <span style={{ fontWeight: '500', color: '#611d1d' }}>
+          <span style={{ fontWeight: '500', color: '#3708e4' }}>
             All packages include a free .com domain and reliable hosting.
           </span>
         </Paragraph>
@@ -74,88 +74,95 @@ export default function DomainHosting() {
           <Text style={{  marginTop: '20px' }}>Loading domain plans...</Text>
         </div>
       ) : (
-        <Row gutter={[10, 10]} justify="center">
-          {domains.length > 0 ? (
-            domains.map((domain, index) => {
-              const accentColor = getCardAccentColor(domain.title);
-              const featuresData = prepareFeatureTableData(domain.features);
-              const columns = [
-                {
-                  title: 'Features',
-                  dataIndex: 'feature',
-                  key: 'feature',
-                }
-              ];
+        <Row gutter={[16, 16]} justify="start">
+  {domains.map((domain, index) => {
+    const accentColor = getCardAccentColor(domain.title);
+    const featuresData = prepareFeatureTableData(domain.features);
+    const columns = [
+      {
+        dataIndex: 'feature',
+        key: 'feature',
+      }
+    ];
 
-              return (
-                <Col xs={24} sm={24} md={12} lg={8} xl={6} key={domain._id || index}>
-                  <Card
-                    hoverable
-                    style={{
-                      borderRadius: "12px",
-                      boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                      overflow: "hidden",
-                      transition: "transform 0.3s ease-in-out",
-                    }}
-                    title={
-                      <div style={{
-                        background: accentColor,
-                        padding: '15px',
-                        borderRadius: '8px 8px 0 0',
-                        color: '#fff',
-                        textAlign: 'center',
-                      }}>
-                        <Title level={3} style={{ margin: 0, color: '#fff', fontSize: '22px' }}>
-                          {domain.title || `Plan ${index + 1}`}
-                        </Title>
-                      </div>
-                    }
-                  >
-                    
-                    <Divider />
+    return (
+      <Col xs={24} sm={12} md={12} lg={6} xl={6} key={domain._id || index}>
+        <Card
+          hoverable
+          style={{
+            borderRadius: "12px",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+            overflow: "hidden",
+            transition: "transform 0.3s ease-in-out",
+          }}
+          title={
+            <div style={{
+              background: accentColor,
+              padding: '10px',
+              borderRadius: '8px 8px 0 0',
+              color: '#fff',
+              textAlign: 'center',
+            }}>
+              <Title level={2} style={{ margin: 0, color: '#fff', fontSize: '18px' }}>
+                {domain.title || `Plan ${index + 1}`}
+              </Title>
+            </div>
+          }
+        >
+          <Tag color={accentColor} style={{ fontSize: "14px", padding: "5px 10px" }}>
+            FEATURES
+          </Tag>
+          <Table
+            dataSource={featuresData}
+            columns={columns}
+            pagination={false}
+            size="small"
+            bordered
+          />
+          <div style={{ textAlign: 'center', paddingTop: '10px' }}>
+          <Button
+  type="primary"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    background: accentColor,
+    borderColor: accentColor,
+    color: "#fff",
+    padding: "10px 20px",
+    borderRadius: "5px",
+    fontSize: "16px",
+    fontWeight: "600",
+    cursor: "pointer",
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.querySelector(".hover-effect").style.left = "0";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.querySelector(".hover-effect").style.left = "-100%";
+  }}
+>
+  <span style={{ position: "relative", zIndex: 1 }}>Select Plan</span>
+  <div
+    className="hover-effect"
+    style={{
+      position: "absolute",
+      top: 0,
+      left: "-100%",
+      width: "100%",
+      height: "100%",
+      background: "rgba(42, 3, 214, 0.2)",
+      transition: "left 0.3s ease-in-out",
+    }}
+  ></div>
+</Button>
 
-                    <div>
-                      <Tag color={accentColor} style={{ fontSize: "14px", padding: "5px 10px" }}>
-                        FEATURES
-                      </Tag>
-                      <Table 
-                        dataSource={featuresData}
-                        columns={columns}
-                        pagination={false}
-                        size="small"
-                        bordered
-                      />
-                      <Divider />
-                    </div>
+          </div>
+        </Card>
+      </Col>
+    );
+  })}
+</Row>
 
-                    <div style={{ textAlign: 'center', paddingTop: '10px' }}>
-                      <button style={{
-                        background: accentColor,
-                        border: "none",
-                        color: "#fff",
-                        padding: "10px 20px",
-                        borderRadius: "5px",
-                        fontSize: "16px",
-                        fontWeight: "600",
-                        cursor: "pointer",
-                        transition: "background 0.3s ease-in-out"
-                      }}
-                        onMouseOver={(e) => e.target.style.background = "#0056b3"}
-                        onMouseOut={(e) => e.target.style.background = accentColor}
-                      >
-                        Select Plan
-                      </button>
-                    </div>
-                  </Card>
-                </Col>
-              );
-            })
-          ) : (
-            <Col span={24} style={{ textAlign: 'center', padding: '40px 0' }}>
-              <Text type="secondary">No domain plans available. Please add some from the admin panel.</Text>
-            </Col>
-          )}
-        </Row>
       )}
     </section>
   );

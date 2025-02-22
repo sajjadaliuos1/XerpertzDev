@@ -40,7 +40,7 @@ export const addDomain = async (payload) => {
   });
   return response;
 };
-/////////////Update Team page////
+/////////////Update domain page////
 export async function updateDomain(id, formData) {
     
   return fetch(`${BASE_URL}/updateDomain/${id}`, {
@@ -61,6 +61,23 @@ export const addTeam = async (payload) => {
 export async function updateTeam(id, formData) {
     
   return fetch(`${BASE_URL}/updateTeam/${id}`, {
+    method: "PUT",
+    body: formData,
+   
+  });
+}
+////////////add Team api//////
+export const addClient = async (payload) => {
+  const response = await fetch("http://localhost:5000/api/addClient", {
+      method: "POST",
+      body: payload
+  });
+  return response;
+};
+/////////////Update Team page////
+export async function updateClient(id, formData) {
+    
+  return fetch(`${BASE_URL}/updateClient/${id}`, {
     method: "PUT",
     body: formData,
    

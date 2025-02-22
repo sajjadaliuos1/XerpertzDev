@@ -189,8 +189,8 @@ export default function Head() {
   style={{
     fontSize: "16px",
     fontWeight: "600",
-    backgroundColor: "blue",
-    borderColor: "blue",
+    backgroundColor: "black",
+    borderColor: "white",
     color: "white",
   }}
 >

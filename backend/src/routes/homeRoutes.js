@@ -5,7 +5,8 @@ const About = require("../models/About");
 const Services = require("../models/Services");
 const Portfolio = require("../models/Portfolio");
 const Domain = require('../models/Domain');
-const Team = require('../models/Team');  // Ensure correct import
+const Team = require('../models/Team');
+const Client = require('../models/Client');   // Ensure correct import
 const upload = require("../middleware/upload");
 const fs = require("fs"); 
 const router = express.Router();
@@ -53,9 +54,10 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
       const portfoliopageData = await Portfolio.find(); // Fetch data from Portfolio collection
       const teamData = await Team.find(); 
       const domainpageData = await Domain.find(); 
+      const clientpageData = await Client.find(); 
       // Check if all collections have data
       if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfoliopageData.length && 
-        !teamData.length,!domainpageData.length) {
+        !teamData.length,!domainpageData.length,!clientpageData) {
           return res.status(404).json({ message: "No data found" });
       }
 
@@ -66,7 +68,8 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
           servicespage: servicesPageData,
           portfoliopage: portfoliopageData,
           teampage:teamData,
-          domainpage:domainpageData
+          domainpage:domainpageData,
+          clientpage:clientpageData
       });
   } catch (error) {
       console.error("Error fetching data:", error);
@@ -86,7 +89,8 @@ router.get("/img/:id", async (req, res) => {
       (await About.findById(id)) ||
       (await Services.findById(id)) ||
       (await Portfolio.findById(id))||  // Now checking Portfolio table
-      (await Team.findById(id));
+      (await Team.findById(id))||  // Now checking Portfolio table
+      (await Client.findById(id));
     if (!imageRecord || !imageRecord.image) {
       return res.status(404).json({ message: "No image found" });
     }
@@ -110,21 +114,33 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Try deleting from each collection
+    // Try finding the record in each collection
     let deletedData =
-      (await Home.findByIdAndDelete(id)) ||
-      (await About.findByIdAndDelete(id)) ||
-      (await Services.findByIdAndDelete(id)) ||
-      (await Portfolio.findByIdAndDelete(id)) ||  // Checking Portfolio table
-      (await Team.findByIdAndDelete(id)) ||  // 
-      (await Domain.findByIdAndDelete(id));  // Corrected this line
+      (await Home.findById(id)) ||
+      (await About.findById(id)) ||
+      (await Services.findById(id)) ||
+      (await Portfolio.findById(id)) ||
+      (await Team.findById(id)) ||
+      (await Domain.findById(id)) ||
+      (await Client.findById(id));
 
-    // If no record was found in any collection
     if (!deletedData) {
       return res.status(404).json({ message: "No record found to delete" });
     }
 
-    res.json({ message: "Data deleted successfully" });
+    // If an image exists, delete it from the folder
+    if (deletedData.image) {
+      const imagePath = path.join(__dirname, "../../public/assets", deletedData.image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath); // Deletes the image file
+        console.log("Image deleted:", deletedData.image);
+      }
+    }
+
+    // Now, delete the record from the database
+    await deletedData.deleteOne();
+
+    res.json({ message: "Data and associated image deleted successfully" });
   } catch (error) {
     console.error("Error deleting data:", error);
     res.status(500).json({ error: "Unable to delete data" });
@@ -151,8 +167,7 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       (await Portfolio.findById(id)) ||
       (await Domain.findById(id)) ||
       (await Team.findById(id))||  
-      (await Domain.findById(id));
-
+      (await Client.findById(id));
     if (!result) {
       console.log("No record found in any collection.");
       return resp.status(404).json({ error: "Record not found" });
