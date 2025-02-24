@@ -74,7 +74,7 @@ export const addClient = async (payload) => {
   });
   return response;
 };
-/////////////Update Team page////
+/////////////Update Client page////
 export async function updateClient(id, formData) {
     
   return fetch(`${BASE_URL}/updateClient/${id}`, {
@@ -83,3 +83,41 @@ export async function updateClient(id, formData) {
    
   });
 }
+////////////add Team api//////
+export const addBusiness = async (payload) => {
+  try {
+    const response = await fetch(`${BASE_URL}/addBusiness`, {
+      method: "POST",
+      body: payload
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to add business");
+    }
+    
+    return response;
+  } catch (error) {
+    console.error("Error in addBusiness API:", error);
+    throw error;
+  }
+};
+/////////////Update Client page////
+export const updateBusiness = async (id, formData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/updateBusiness/${id}`, {
+      method: "PUT",
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to update business");
+    }
+    
+    return response;
+  } catch (error) {
+    console.error("Error in updateBusiness API:", error);
+    throw error;
+  }
+};

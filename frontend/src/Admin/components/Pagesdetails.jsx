@@ -27,7 +27,8 @@ const Pagesdetails = () => {
       ...(result. portfoliopage || []).map((item) => ({ ...item, category: 'portfolio' })),
       ...(result. teampage || []).map((item) => ({ ...item, category: 'team' })),
       ...(result. domainpage || []).map((item) => ({ ...item, category: 'domains' })),
-      ...(result. clientpage || []).map((item) => ({ ...item, category: 'ourclients' })),  // Ensure correct key
+      ...(result. clientpage || []).map((item) => ({ ...item, category: 'ourclients' })),
+      ...(result. businesspage || []).map((item) => ({ ...item, category: 'business' })),  // Ensure correct key
     ];
 
     console.log("Combined Data:", combinedData); // Debugging  
@@ -131,7 +132,7 @@ const Pagesdetails = () => {
             key: 'image',
             render: (_, record) => {
               // Don't render image for domains category
-              if (record.category?.toLowerCase() === 'domains') {
+              if (record.category?.toLowerCase() === 'domains' || record.category?.toLowerCase() === "business") {
                 return 'N/A';
               } 
               return (

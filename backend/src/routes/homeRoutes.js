@@ -8,9 +8,11 @@ const Domain = require('../models/Domain');
 const Team = require('../models/Team');
 const Client = require('../models/Client');   // Ensure correct import
 const upload = require("../middleware/upload");
+const Business = require("../models/Business");
 const fs = require("fs"); 
 const router = express.Router();
 const { verifyToken } = require("../middleware/JwtToken");
+
 
 // ✅ Add Home Content
 router.post("/addhome", upload.single("image"), async (req, res) => {
@@ -55,9 +57,10 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
       const teamData = await Team.find(); 
       const domainpageData = await Domain.find(); 
       const clientpageData = await Client.find(); 
+      const businesspageData = await Business.find();
       // Check if all collections have data
       if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfoliopageData.length && 
-        !teamData.length,!domainpageData.length,!clientpageData) {
+        !teamData.length && !domainpageData.length && !clientpageData && !businesspageData) {
           return res.status(404).json({ message: "No data found" });
       }
 
@@ -69,7 +72,8 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
           portfoliopage: portfoliopageData,
           teampage:teamData,
           domainpage:domainpageData,
-          clientpage:clientpageData
+          clientpage:clientpageData,
+          businesspage:businesspageData
       });
   } catch (error) {
       console.error("Error fetching data:", error);
@@ -122,7 +126,8 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
       (await Portfolio.findById(id)) ||
       (await Team.findById(id)) ||
       (await Domain.findById(id)) ||
-      (await Client.findById(id));
+      (await Client.findById(id))||
+      (await Business.findById(id));
 
     if (!deletedData) {
       return res.status(404).json({ message: "No record found to delete" });
@@ -167,7 +172,8 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       (await Portfolio.findById(id)) ||
       (await Domain.findById(id)) ||
       (await Team.findById(id))||  
-      (await Client.findById(id));
+      (await Client.findById(id))||
+      (await Business.findById(id));
     if (!result) {
       console.log("No record found in any collection.");
       return resp.status(404).json({ error: "Record not found" });

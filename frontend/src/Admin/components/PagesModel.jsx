@@ -1,12 +1,14 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, } from "react";
 import { Modal, Row, Col, Button, Form, Input, Upload, message } from "antd";
 import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
 import { addAbout, updateAbout } from "../../Api/About";
-import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam ,
-         addClient,updateClient            } from "../../Api/PagesApi";
+import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam,
+         addClient, updateClient, addBusiness, updateBusiness } from "../../Api/PagesApi";
+import { Editor } from '@tinymce/tinymce-react';
+
 
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
@@ -15,6 +17,8 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   const [category, setCategory] = useState('home');
   const [loading, setLoading] = useState(false);
   const isEditing = Boolean(initialData);
+  const [details, setDetails] = useState("");
+  const [smsRate, setSmsRate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +44,11 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             clientname: data.clientname || "",
             projecturl: data.projecturl || "",
             category: data.category || "home"
-            
           });
+
+          // Set the editor content if available
+          if (data.details) setDetails(data.details);
+          if (data.SmSRate) setSmsRate(data.SmSRate);
 
           setCategory(data.category?.toLowerCase() || 'home');
 
@@ -81,6 +88,11 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
         projecturl:"",
         features: [{ feature: "" }]
       });
+      // Reset editor content when category changes
+      if (category.toLowerCase() !== "business") {
+        setDetails("");
+        setSmsRate("");
+      }
     }
   }, [category, form, initialData]);
 
@@ -108,6 +120,7 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       payload.append("githuburl", values.githuburl || "");  
       payload.append("livedemo", values.livedemo || "");  
     }
+    
     if (category.toLowerCase() === "domains") {
       // Make sure features is properly formatted
       const featuresArray = values.features 
@@ -117,18 +130,35 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       payload.append("features", JSON.stringify(featuresArray));
     }
     
-    
-    
     if (category.toLowerCase() === "team") {
       payload.append("name", values.name || "");
       payload.append("role", values.role || "");
       payload.append("fblink", values.fblink || "");
-    }if (category.toLowerCase() === "ourclients") {
+    }
+    
+    if (category.toLowerCase() === "ourclients") {
       payload.append("clientname", values.clientname || "");
       payload.append("projecturl", values.projecturl || "");
-      
     }
-  
+    
+    if (category.toLowerCase() === "business") {
+      // Make sure to check if details and smsRate have content
+      if (!details.trim()) {
+        message.error("Details cannot be empty for Business category");
+        setLoading(false);
+        return;
+      }
+      
+      if (!smsRate.trim()) {
+        message.error("SMS Rate cannot be empty for Business category");
+        setLoading(false);
+        return;
+      }
+      
+      payload.append("details", details);
+      payload.append("SmSRate", smsRate);
+    }
+    
     fileList.forEach((file) => {
       if (file.originFileObj) {
         payload.append("image", file.originFileObj);
@@ -152,30 +182,38 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           break;
         case "domains":
           response = isEditing ? await updateDomain(initialData, payload) : await addDomain(payload);
-          console.log(response);
           break;
-          case "ourclients":
+        case "ourclients":
           response = isEditing ? await updateClient(initialData, payload) : await addClient(payload);
-          console.log(response);
+          break;
+        case "business":
+          response = isEditing ? await updateBusiness(initialData, payload) : await addBusiness(payload);
+          console.log("Business response:", response);
           break;
         default:
           response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
       }
   
-      if (!response.ok) throw new Error("Operation failed.");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Operation failed.");
+      }
+      
       message.success(`${isEditing ? "Updated" : "Added"} successfully!`);
       form.resetFields();
       setFileList([]);
+      setDetails("");
+      setSmsRate("");
       refreshData();
       handleCancel();
     } catch (error) {
+      console.error("Submission error:", error);
       message.error(error.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
   };
   
-
   const uploadProps = {
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
@@ -196,17 +234,17 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   };
 
   const shouldShowTitle = () => {
-    return !["team", "ourclients"].includes(category.toLowerCase());
+    return !["team","business", "ourclients"].includes(category.toLowerCase());
   };
 
   const shouldShowParagraph = () => {
-    return ![ "services", "portfolio", "domains", "business", "team", "ourclients"].includes(
+    return ![ "services", "portfolio","business", "domains", "team", "ourclients"].includes(
       category.toLowerCase()
     );
   };
 
   const shouldShowDescription = () => {
-    return !["domains","aboutus", "team", "ourclients"].includes(category.toLowerCase());
+    return !["domains","business","aboutus", "team", "ourclients"].includes(category.toLowerCase());
   };
 
   return (
@@ -270,7 +308,8 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-           {category.toLowerCase() === "team" && (
+          
+          {category.toLowerCase() === "team" && (
             <Col xs={24}>
               <Form.Item name="name" label="Name">
                 <Input placeholder="Enter Name" />
@@ -283,7 +322,43 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
- {category.toLowerCase() === "ourclients" && (
+          
+          {category.toLowerCase() === "business" && (
+            <>
+              <Col xs={24}>
+                <Form.Item label="Details" rules={[{ required: true, message: "Details are required!" }]}>
+                  <Editor 
+                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl" 
+                    value={details}
+                    onEditorChange={(content) => setDetails(content)} 
+                    init={{ 
+                      height: 300, 
+                      menubar: true, 
+                      plugins: 'table lists link image media', 
+                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table' 
+                    }} 
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                <Form.Item label="SMS Rate" rules={[{ required: true, message: "SMS Rate is required!" }]}>
+                  <Editor 
+                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl" 
+                    value={smsRate}
+                    onEditorChange={(content) => setSmsRate(content)} 
+                    init={{ 
+                      height: 300, 
+                      menubar: true, 
+                      plugins: 'table lists link image media', 
+                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table' 
+                    }} 
+                  />
+                </Form.Item>
+              </Col>
+            </>
+          )}
+          
+          {category.toLowerCase() === "ourclients" && (
             <Col xs={24}>
               <Form.Item name="clientname" label="Client Name">
                 <Input placeholder="client Name" />
@@ -291,10 +366,11 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               <Form.Item name="projecturl" label="Project Url">
                 <Input placeholder="Project Url" />
               </Form.Item>
-               </Col>
+            </Col>
           )}
+          
           {category.toLowerCase() === "domains" && (
-              <Col xs={24}>
+            <Col xs={24}>
               <Form.List name="features">
                 {(fields, { add, remove }) => (
                   <>
@@ -334,24 +410,24 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-
-          {category.toLowerCase() !== "domains" && (
+          
+          {category.toLowerCase() !== "business" && category.toLowerCase() !== "domains" && (
             <Col xs={24}>
-             <Form.Item label="Upload Image">
-              <Upload
-                {...uploadProps}
-                listType="picture-card"
-                fileList={fileList}
-                onChange={handleImageChange}
-              >
-                {fileList.length < 1 && category.toLowerCase() !== "domains" && (
-                  <div>
-                    <UploadOutlined />
-                    <div style={{ marginTop: 8 }}>Upload</div>
-                  </div>
-                )}
-              </Upload>
-            </Form.Item>
+              <Form.Item label="Upload Image">
+                <Upload
+                  {...uploadProps}
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={handleImageChange}
+                >
+                  {fileList.length < 1 && category.toLowerCase() !== "domains" && (
+                    <div>
+                      <UploadOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
             </Col>
           )}
         </Row>
