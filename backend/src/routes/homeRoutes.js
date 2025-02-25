@@ -12,6 +12,7 @@ const Business = require("../models/Business");
 const fs = require("fs"); 
 const router = express.Router();
 const { verifyToken } = require("../middleware/JwtToken");
+const Contact = require("../models/Contact");
 
 
 // ✅ Add Home Content
@@ -58,9 +59,10 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
       const domainpageData = await Domain.find(); 
       const clientpageData = await Client.find(); 
       const businesspageData = await Business.find();
+      const contactpageData = await Contact.find();
       // Check if all collections have data
       if (!homepageData.length && !aboutPageData.length && !servicesPageData.length && !portfoliopageData.length && 
-        !teamData.length && !domainpageData.length && !clientpageData && !businesspageData) {
+        !teamData.length && !domainpageData.length && !clientpageData && !businesspageData && !contactpageData) {
           return res.status(404).json({ message: "No data found" });
       }
 
@@ -73,7 +75,9 @@ router.get("/Pagesdetails", verifyToken, async (req, res) => {
           teampage:teamData,
           domainpage:domainpageData,
           clientpage:clientpageData,
-          businesspage:businesspageData
+          businesspage:businesspageData,
+          contactpage:contactpageData
+
       });
   } catch (error) {
       console.error("Error fetching data:", error);
@@ -127,7 +131,8 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
       (await Team.findById(id)) ||
       (await Domain.findById(id)) ||
       (await Client.findById(id))||
-      (await Business.findById(id));
+      (await Business.findById(id))||
+      (await Contact.findById(id));
 
     if (!deletedData) {
       return res.status(404).json({ message: "No record found to delete" });
@@ -173,7 +178,8 @@ router.get("/gethome/:id", verifyToken, async (req, resp) => {
       (await Domain.findById(id)) ||
       (await Team.findById(id))||  
       (await Client.findById(id))||
-      (await Business.findById(id));
+      (await Business.findById(id))||
+      (await Contact.findById(id));
     if (!result) {
       console.log("No record found in any collection.");
       return resp.status(404).json({ error: "Record not found" });

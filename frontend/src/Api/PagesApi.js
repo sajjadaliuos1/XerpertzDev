@@ -66,7 +66,7 @@ export async function updateTeam(id, formData) {
    
   });
 }
-////////////add Team api//////
+////////////add Client api//////
 export const addClient = async (payload) => {
   const response = await fetch("http://localhost:5000/api/addClient", {
       method: "POST",
@@ -83,7 +83,7 @@ export async function updateClient(id, formData) {
    
   });
 }
-////////////add Team api//////
+////////////add Business api//////
 export const addBusiness = async (payload) => {
   try {
     const response = await fetch(`${BASE_URL}/addBusiness`, {
@@ -102,7 +102,7 @@ export const addBusiness = async (payload) => {
     throw error;
   }
 };
-/////////////Update Client page////
+/////////////Update Business page////
 export const updateBusiness = async (id, formData) => {
   try {
     const response = await fetch(`${BASE_URL}/updateBusiness/${id}`, {
@@ -121,3 +121,21 @@ export const updateBusiness = async (id, formData) => {
     throw error;
   }
 };
+////////////add Contact api//////
+export const addContact = async (payload) => {
+  const response = await fetch("http://localhost:5000/api/addContact", {
+      method: "POST",
+      body: payload
+  });
+  return response;
+};
+
+/////////////Update Contact page////
+export async function updateContact(id, formData) {
+    
+  return fetch(`${BASE_URL}/updateContact/${id}`, {
+    method: "PUT",
+    body: formData,
+   
+  });
+}

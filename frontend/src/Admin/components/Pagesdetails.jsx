@@ -28,7 +28,8 @@ const Pagesdetails = () => {
       ...(result. teampage || []).map((item) => ({ ...item, category: 'team' })),
       ...(result. domainpage || []).map((item) => ({ ...item, category: 'domains' })),
       ...(result. clientpage || []).map((item) => ({ ...item, category: 'ourclients' })),
-      ...(result. businesspage || []).map((item) => ({ ...item, category: 'business' })),  // Ensure correct key
+      ...(result. businesspage || []).map((item) => ({ ...item, category: 'business' })),
+      ...(result. contactpage || []).map((item) => ({ ...item, category: 'contact' })),   // Ensure correct key
     ];
 
     console.log("Combined Data:", combinedData); // Debugging  
@@ -96,23 +97,59 @@ const Pagesdetails = () => {
       <Table
         columns={[
           { title: 'S.No', key: 'serialNumber', render: (_, __, index) => index + 1 },
-          { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
-          { title: 'Paragraph', dataIndex: 'paragraph', key: 'paragraph', ellipsis: true },
+          {
+            title: 'Title', 
+            dataIndex: 'title', 
+            key: 'title', 
+            ellipsis: true,
+            render: (_, record) => {
+              if (record.category === 'contact') {
+                return (
+                  <Tooltip title={record.address || 'N/A'}>
+                    <span>{record.address || 'N/A'}</span>
+                  </Tooltip>
+                );
+              }
+              return (
+                <Tooltip title={record.title || 'N/A'}>
+                  <span>{record.title || 'N/A'}</span>
+                </Tooltip>
+              );
+            }
+          },
+          {
+            title: 'Paragraph',
+            dataIndex: 'paragraph',
+            key: 'paragraph',
+            ellipsis: true,
+            render: (_, record) => {
+              const content = record.category === 'contact' ? record.phone || 'N/A' : record.paragraph || 'N/A';
+              
+              return (
+                <Tooltip title={content}>
+                  <span>{content}</span>
+                </Tooltip>
+              );
+            }
+          },
           { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
           {
             title: 'Name',
             key: 'name',
             ellipsis: true,
             render: (_, record) => {
-              if (record.category === 'team') {
-                return record.name || 'N/A'; // Adjust according to your API response
-              }
-              if (record.category === 'ourclients') {
-                return record.clientname || 'N/A';
-              }
-              return 'N/A';
-            },
-          },
+              const content = record.category === 'contact' 
+                ? record.email || 'N/A' 
+                : record.name || record.clientname || 'N/A';
+          
+              return (
+                <Tooltip title={content}>
+                  <span>{content}</span>
+                </Tooltip>
+              );
+            }
+          }
+          ,
           { title: 'Role', dataIndex: 'role', key: 'role', ellipsis: true },
           { 
             title: 'Features', 
@@ -132,7 +169,10 @@ const Pagesdetails = () => {
             key: 'image',
             render: (_, record) => {
               // Don't render image for domains category
-              if (record.category?.toLowerCase() === 'domains' || record.category?.toLowerCase() === "business") {
+              if (record.category?.toLowerCase() === 'domains' 
+              || record.category?.toLowerCase() === "business" 
+              ||record.category?.toLowerCase() === "contact") 
+              {
                 return 'N/A';
               } 
               return (

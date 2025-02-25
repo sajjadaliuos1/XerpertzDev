@@ -1,14 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Typography, Space, Divider, Statistic } from 'antd';
+import { useState, useEffect } from 'react';
+import { Layout, Row, Col, Typography, Divider, Statistic, message } from 'antd';
 import { EnvironmentOutlined, PhoneOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { homeDetails } from '../Api/Home';
 
 const { Footer } = Layout;
 const { Title, Text } = Typography;
 
 export default function Foot() {
   const [visitorCount, setVisitorCount] = useState(5000); // Initial visitor count
+  const [contact, setContact] = useState(null);
+
+  const fetchPagesDetails = async () => {
+    try {
+      const response = await homeDetails();
+      const result = await response.json();
+      
+      console.log("Full API Response:", result); // Debugging
+
+      // Extract 'contact' page data dynamically
+      const contactData = result?.contactpage?.length > 0 ? result.contactpage[0] : null;
+
+      console.log("Filtered Contact Data:", contactData); // Debugging
+
+      setContact(contactData);
+    } catch (error) {
+      message.error("Failed to fetch data");
+      console.error("Fetch error:", error);
+    }
+  };
 
   useEffect(() => {
+    fetchPagesDetails();
+
     // Simulate visitor count incrementing
     const interval = setInterval(() => {
       setVisitorCount((prevCount) => prevCount + 1); // Increment visitor count
@@ -38,7 +61,7 @@ export default function Foot() {
                 <EnvironmentOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
                 <Title level={4} style={{ color: '#fff' }}>Address</Title>
                 <Text style={{ fontSize: '16px', color: '#fff' }}>
-                  Office No. 1, 2nd Floor, Ali Plaza New Madyan Road, Mingora Swat.
+                  {contact?.address || 'Office No. 1, 2nd Floor, Ali Plaza New Madyan Road, Mingora Swat.'}
                 </Text>
               </div>
             </Col>
@@ -49,7 +72,8 @@ export default function Foot() {
                 <PhoneOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
                 <Title level={4} style={{ color: '#fff' }}>Call Us</Title>
                 <Text style={{ fontSize: '16px', color: '#fff' }}>
-                  +92 333 9471086 <br /> 0946-811722
+                  {contact?.phone || '+92 333 9471086'} <br />
+                  {contact?.phoneAlt || '0946-811722'}
                 </Text>
               </div>
             </Col>
@@ -60,7 +84,7 @@ export default function Foot() {
                 <MailOutlined style={{ fontSize: '36px', color: '#1890ff' }} />
                 <Title level={4} style={{ color: '#fff' }}>Emails</Title>
                 <Text style={{ fontSize: '16px', color: '#fff' }}>
-                  info@xpertzdev.com
+                  {contact?.email || 'info@xpertzdev.com'}
                 </Text>
               </div>
             </Col>

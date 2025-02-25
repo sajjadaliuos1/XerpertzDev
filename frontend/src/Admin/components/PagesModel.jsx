@@ -1,14 +1,12 @@
 import PropTypes from "prop-types";
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Row, Col, Button, Form, Input, Upload, message } from "antd";
 import { PlusOutlined, MinusOutlined, UploadOutlined } from "@ant-design/icons";
 import useDropdown from "./Dropdown";
 import { addHome, updateHome, getHomeById } from "../../Api/Home";
 import { addAbout, updateAbout } from "../../Api/About";
-import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam,
-         addClient, updateClient, addBusiness, updateBusiness } from "../../Api/PagesApi";
+import { addServices, updateServices, addPortfolio, updatePortfolio, addDomain, updateDomain, addTeam, updateTeam, addClient, updateClient, addBusiness, updateBusiness, addContact, updateContact } from "../../Api/PagesApi";
 import { Editor } from '@tinymce/tinymce-react';
-
 
 export default function PagesModel({ isModalVisible, handleCancel, initialData, refreshData }) {
   const { DropdownButton } = useDropdown();
@@ -43,7 +41,10 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
             fblink: data.fblink || "",
             clientname: data.clientname || "",
             projecturl: data.projecturl || "",
-            category: data.category || "home"
+            address: data.address || "",
+            phone: data.phone || "",
+            email: data.email || "",
+            category: data.category || "home" // Ensure category is set
           });
 
           // Set the editor content if available
@@ -79,14 +80,15 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
         title: "",
         paragraph: "",
         description: "",
-        githuburl:"",
-        livedemo:"",
-        name:"",
-        role:"",
-        fblink:"",
-        clientname:"",
-        projecturl:"",
-        features: [{ feature: "" }]
+        githuburl: "",
+        livedemo: "",
+        name: "",
+        role: "",
+        fblink: "",
+        clientname: "",
+        projecturl: "",
+        features: [{ feature: "" }],
+        category: "home" // Ensure category is set
       });
       // Reset editor content when category changes
       if (category.toLowerCase() !== "business") {
@@ -105,42 +107,47 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       message.error("Please upload an image for the team member!");
       return;
     }
-  
-    console.log("Form Submitted Values:", values); // Debugging log
-  
+
+    console.log("Form Submitted Values:", { ...values, category }); // Debugging log
+
     setLoading(true);
     const payload = new FormData();
-    payload.append("category", category);
+    payload.append("category", category); // Ensure category is appended
     payload.append("title", values.title || "");
     payload.append("paragraph", values.paragraph || "");
     payload.append("description", values.description || "");
-  
+
     // Explicitly append GitHubUrl and LiveDemo for portfolio category
     if (category.toLowerCase() === "portfolio") {
-      payload.append("githuburl", values.githuburl || "");  
-      payload.append("livedemo", values.livedemo || "");  
+      payload.append("githuburl", values.githuburl || "");
+      payload.append("livedemo", values.livedemo || "");
     }
-    
+
     if (category.toLowerCase() === "domains") {
       // Make sure features is properly formatted
-      const featuresArray = values.features 
+      const featuresArray = values.features
         ? values.features.map(f => f.feature).filter(feature => feature.trim() !== "")
         : [];
-      
+
       payload.append("features", JSON.stringify(featuresArray));
     }
-    
+
     if (category.toLowerCase() === "team") {
       payload.append("name", values.name || "");
       payload.append("role", values.role || "");
       payload.append("fblink", values.fblink || "");
     }
-    
+    if (category.toLowerCase() === "contact") {
+       
+      payload.append("address", values.address || "");
+      payload.append("phone", values.phone || "");
+      payload.append("email", values.email || "");
+    }
     if (category.toLowerCase() === "ourclients") {
       payload.append("clientname", values.clientname || "");
       payload.append("projecturl", values.projecturl || "");
     }
-    
+
     if (category.toLowerCase() === "business") {
       // Make sure to check if details and smsRate have content
       if (!details.trim()) {
@@ -148,23 +155,23 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
         setLoading(false);
         return;
       }
-      
+
       if (!smsRate.trim()) {
         message.error("SMS Rate cannot be empty for Business category");
         setLoading(false);
         return;
       }
-      
+
       payload.append("details", details);
       payload.append("SmSRate", smsRate);
     }
-    
+
     fileList.forEach((file) => {
       if (file.originFileObj) {
         payload.append("image", file.originFileObj);
       }
     });
-  
+
     try {
       let response;
       switch (category.toLowerCase()) {
@@ -188,17 +195,20 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
           break;
         case "business":
           response = isEditing ? await updateBusiness(initialData, payload) : await addBusiness(payload);
-          console.log("Business response:", response);
+          break;
+        case "contact":
+          response = isEditing ? await updateContact(initialData, payload) : await addContact(payload);
+          console.log("contact response:", response);
           break;
         default:
           response = isEditing ? await updateHome(initialData, payload) : await addHome(payload);
       }
-  
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Operation failed.");
       }
-      
+
       message.success(`${isEditing ? "Updated" : "Added"} successfully!`);
       form.resetFields();
       setFileList([]);
@@ -213,7 +223,7 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
       setLoading(false);
     }
   };
-  
+
   const uploadProps = {
     beforeUpload: (file) => {
       const isImage = file.type.startsWith('image/');
@@ -234,17 +244,17 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
   };
 
   const shouldShowTitle = () => {
-    return !["team","business", "ourclients"].includes(category.toLowerCase());
+    return !["team", "business", "ourclients", "contact"].includes(category.toLowerCase());
   };
 
   const shouldShowParagraph = () => {
-    return ![ "services", "portfolio","business", "domains", "team", "ourclients"].includes(
+    return !["services", "portfolio", "business", "contact", "domains", "team", "ourclients"].includes(
       category.toLowerCase()
     );
   };
 
   const shouldShowDescription = () => {
-    return !["domains","business","aboutus", "team", "ourclients"].includes(category.toLowerCase());
+    return !["domains", "business", "aboutus", "team", "ourclients", "contact"].includes(category.toLowerCase());
   };
 
   return (
@@ -262,16 +272,17 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
         onFinish={handleFinish}
         layout="vertical"
         initialValues={{
-          category: "Home",
+          category: "home", // Ensure category is part of initialValues
           title: "",
           paragraph: "",
           description: "",
-          githuburl:"",
-          livedemo:"",
-          name:"",
-          fblink:"",
-          clientname:"",
-          projecturl:"",
+          githuburl: "",
+          livedemo: "",
+          name: "",
+          fblink: "",
+          clientname: "",
+          projecturl: "",
+         
           features: [{ feature: "" }],
         }}
       >
@@ -308,7 +319,7 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-          
+
           {category.toLowerCase() === "team" && (
             <Col xs={24}>
               <Form.Item name="name" label="Name">
@@ -322,42 +333,54 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-          
+          {category.toLowerCase() === "contact" && (
+            <Col xs={24}>
+              <Form.Item name="address" label="Address" rules={[{ required: true, message: "Enter Address!" }]}>
+                <Input placeholder="Enter Address" />
+              </Form.Item>
+              <Form.Item name="phone" label="Phone" rules={[{ required: true, message: "Enter Phone!" }]}>
+                <Input placeholder="Enter Phone" />
+              </Form.Item>
+              <Form.Item name="email" label="Email" rules={[{ required: true, message: "Enter Email!", type: "email" }]}>
+                <Input placeholder="Enter Email" />
+              </Form.Item>
+            </Col>
+          )}
           {category.toLowerCase() === "business" && (
             <>
               <Col xs={24}>
                 <Form.Item label="Details" rules={[{ required: true, message: "Details are required!" }]}>
-                  <Editor 
-                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl" 
+                  <Editor
+                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl"
                     value={details}
-                    onEditorChange={(content) => setDetails(content)} 
-                    init={{ 
-                      height: 300, 
-                      menubar: true, 
-                      plugins: 'table lists link image media', 
-                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table' 
-                    }} 
+                    onEditorChange={(content) => setDetails(content)}
+                    init={{
+                      height: 300,
+                      menubar: true,
+                      plugins: 'table lists link image media',
+                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table'
+                    }}
                   />
                 </Form.Item>
               </Col>
               <Col xs={24}>
                 <Form.Item label="SMS Rate" rules={[{ required: true, message: "SMS Rate is required!" }]}>
-                  <Editor 
-                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl" 
+                  <Editor
+                    apiKey="81b8nyhb2yby1u5r0vye96xl1rz8yyn2uwdvfageaufudcsl"
                     value={smsRate}
-                    onEditorChange={(content) => setSmsRate(content)} 
-                    init={{ 
-                      height: 300, 
-                      menubar: true, 
-                      plugins: 'table lists link image media', 
-                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table' 
-                    }} 
+                    onEditorChange={(content) => setSmsRate(content)}
+                    init={{
+                      height: 300,
+                      menubar: true,
+                      plugins: 'table lists link image media',
+                      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | table'
+                    }}
                   />
                 </Form.Item>
               </Col>
             </>
           )}
-          
+
           {category.toLowerCase() === "ourclients" && (
             <Col xs={24}>
               <Form.Item name="clientname" label="Client Name">
@@ -368,7 +391,7 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-          
+
           {category.toLowerCase() === "domains" && (
             <Col xs={24}>
               <Form.List name="features">
@@ -410,26 +433,27 @@ export default function PagesModel({ isModalVisible, handleCancel, initialData, 
               </Form.Item>
             </Col>
           )}
-          
-          {category.toLowerCase() !== "business" && category.toLowerCase() !== "domains" && (
-            <Col xs={24}>
-              <Form.Item label="Upload Image">
-                <Upload
-                  {...uploadProps}
-                  listType="picture-card"
-                  fileList={fileList}
-                  onChange={handleImageChange}
-                >
-                  {fileList.length < 1 && category.toLowerCase() !== "domains" && (
-                    <div>
-                      <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  )}
-                </Upload>
-              </Form.Item>
-            </Col>
-          )}
+
+          {category.toLowerCase() !== "business" && category.toLowerCase() !== "domains"
+            && category.toLowerCase() !== "contact" && (
+              <Col xs={24}>
+                <Form.Item label="Upload Image">
+                  <Upload
+                    {...uploadProps}
+                    listType="picture-card"
+                    fileList={fileList}
+                    onChange={handleImageChange}
+                  >
+                    {fileList.length < 1 && category.toLowerCase() !== "domains" && (
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload</div>
+                      </div>
+                    )}
+                  </Upload>
+                </Form.Item>
+              </Col>
+            )}
         </Row>
 
         <Row gutter={[16, 16]}>
