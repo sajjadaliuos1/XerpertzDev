@@ -38,7 +38,7 @@ export const login = async (email, password) => {
 ///////////// All users Api//////////////
 
 export const AllUsers = async () => {
-  const response = await fetch('http://localhost:5000/api/userdetails',Token);
+  const response = await fetch('http://localhost:5000/api/userdetails');
   return response;
 };
 

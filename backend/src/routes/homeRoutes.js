@@ -48,7 +48,7 @@ router.post("/addhome", upload.single("image"), async (req, res) => {
 
 
 // Get all Pagesdetails data
-router.get("/Pagesdetails", verifyToken, async (req, res) => {
+router.get("/Pagesdetails", async (req, res) => {
   try {
       // Fetch data from all collections
       const homepageData = await Home.find(); 

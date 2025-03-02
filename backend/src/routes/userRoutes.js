@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
 
 
 // Get All Users
-router.get("/userdetails",verifyToken, async (req, res) => {
+router.get("/userdetails", async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);

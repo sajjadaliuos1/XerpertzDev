@@ -9,7 +9,7 @@ export const addHome = async (payload) => {
 };
 ////////////Home Details///////////
   export const homeDetails  = async () => {
-    const response = await fetch(`${BASE_URL}/Pagesdetails`,Token);
+    const response = await fetch(`${BASE_URL}/Pagesdetails`);
     return response;
   };
   // Delete Home Data API function

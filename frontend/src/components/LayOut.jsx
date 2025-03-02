@@ -1,6 +1,6 @@
-import React from 'react';
+
 import { Layout } from 'antd';
-import { Routes, Route } from 'react-router-dom'; 
+
 import Head from './Header';
 import Foot from './Footer';
 import Home from './Pages/Home';

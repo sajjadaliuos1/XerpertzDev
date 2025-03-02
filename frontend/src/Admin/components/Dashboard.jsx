@@ -5,6 +5,7 @@ import SideMenu from './SideMenu';
 import AdDashboard from './AdDashboard';
 import UserDetails from './userdetails';
 import Pagesdetails from './Pagesdetails';
+import Logout from './Logout';
 
 
 const { Content, Header } = Layout;
@@ -20,7 +21,8 @@ const Dashboard = () => {
         return <div>About Us Content</div>; // Replace with the About component
       case 'User':
         return <UserDetails/>; 
-       
+        case 'logout':
+        return <Logout/>; 
       default:
         return <AdDashboard />;
     }

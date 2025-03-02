@@ -12,14 +12,9 @@ export default function AdminHead() {
 
   // Logout function - moved above the return statement
   const handleLogout = () => {
-    // Clear user data from local/session storage (if necessary)
-    localStorage.removeItem('user'); // Example of clearing user data from localStorage
-
-    // Redirect to the login page (or home page)
-    navigate('/login'); // Use navigate to redirect to login page
-
-    // Optional: You can also call an API to log out the user from the server.
+    navigate("/logout"); // Navigate to Logout component
   };
+
 
   // Define the user menu dropdown
   const userMenu = (
