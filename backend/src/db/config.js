@@ -3,14 +3,10 @@ require('dotenv').config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of default 30s
-        });
-        console.log('✅ MongoDB Connected');
+        await mongoose.connect(process.env.MONGO_URI); // ✅ Removed deprecated options
+        console.log('MongoDB Connected');
     } catch (error) {
-        console.error('❌ MongoDB Connection Error:', error.message);
+        console.error('MongoDB Connection Error:', error);
         process.exit(1);
     }
 };
