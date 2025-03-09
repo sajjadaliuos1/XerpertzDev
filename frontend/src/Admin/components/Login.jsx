@@ -63,8 +63,9 @@ export default function Login() {
             textAlign: 'center',
           }}
         >
+               <Link to="/"> 
           <div style={logoContainerStyle}>
-            <img
+       <img
               src={logo}
               alt="Logo"
               style={{
@@ -72,7 +73,7 @@ export default function Login() {
                 height: '100px',
               }}
             />
-          </div>
+          </div></Link>
           <Title level={2} style={{ color: '#fff', marginBottom: 16 }}>
             Welcome Back!
           </Title>

@@ -160,7 +160,7 @@ router.delete("/home/:id", verifyToken, async (req, res) => {
 
 
 //////get one record HomeData Api for Updation////
-router.get("/gethome/:id", verifyToken, async (req, resp) => {
+router.get("/gethome/:id",  async (req, resp) => {
   try {
     const { id } = req.params;
 

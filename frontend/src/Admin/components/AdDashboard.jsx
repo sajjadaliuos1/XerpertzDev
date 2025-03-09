@@ -24,7 +24,7 @@ const AdDashboard = () => {
     { month: 'Mar', views: 5000 },
     { month: 'Apr', views: 4000 },
     { month: 'May', views: 6000 },
-    { month: 'Jun', views: 7000 },
+   
   ];
 
   const config = {

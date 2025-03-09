@@ -1,7 +1,7 @@
 import  { useState, useEffect } from "react";
 import { Layout, Menu, Drawer, Button } from "antd";
 import { MenuOutlined, SettingOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/images/logo.png";
 
 const { Header } = Layout;
@@ -84,11 +84,12 @@ export default function Head() {
           width: "100%",
         }}
       >
+            <Link to="/"> 
         <div className="logo">
           <a href="/" onClick={(e) => e.preventDefault()}>
             <img src={logo} alt="logo" style={{ height: "60px", marginTop: "15px" }} />
           </a>
-        </div>
+        </div> </Link>
 
         {!isMobile ? (
           <Menu

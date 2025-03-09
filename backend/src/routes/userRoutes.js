@@ -77,13 +77,13 @@ router.get("/userdetails", async (req, res) => {
 });
 
 // Delete User
-router.delete("/user/:id",verifyToken, async (req, res) => {
+router.delete("/user/:id", async (req, res) => {
     await User.deleteOne({ _id: req.params.id });
     res.json({ message: "User deleted successfully" });
 });
 
 // Update User
-router.put('/updateuser/:id', verifyToken, async (req, res) => {
+router.put('/updateuser/:id', async (req, res) => {
     try {
         const { password, ...updateFields } = req.body;
         if (password) {

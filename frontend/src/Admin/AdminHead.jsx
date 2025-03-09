@@ -1,5 +1,5 @@
 import { Layout, Dropdown, Space, Typography, Menu } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, HomeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 
 import logo from "./../assets/images/logo.png";
@@ -10,11 +10,15 @@ const { Text } = Typography;
 export default function AdminHead() {
   const navigate = useNavigate(); // Initialize useNavigate for redirection
 
-  // Logout function - moved above the return statement
+  // Logout function
   const handleLogout = () => {
     navigate("/logout"); // Navigate to Logout component
   };
 
+  // Navigate to home function
+  const goToHome = () => {
+    navigate("/"); // Navigate to front page
+  };
 
   // Define the user menu dropdown
   const userMenu = (
@@ -48,13 +52,18 @@ export default function AdminHead() {
           <Text style={{ color: '#fff', fontSize: 18, marginLeft: '10px' }}>My Application</Text>
         </div>
 
-        {/* User Profile Dropdown */}
-        <Dropdown overlay={userMenu} trigger={['click']}>
-          <Space style={{ color: '#fff', cursor: 'pointer' }}>
-            <UserOutlined />
-            Profile
-          </Space>
-        </Dropdown>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {/* Home Icon */}
+          <HomeOutlined onClick={goToHome} style={{ color: '#fff', fontSize: '20px', cursor: 'pointer' }} />
+          
+          {/* User Profile Dropdown */}
+          <Dropdown overlay={userMenu} trigger={['click']}>
+            <Space style={{ color: '#fff', cursor: 'pointer' }}>
+              <UserOutlined />
+              Profile
+            </Space>
+          </Dropdown>
+        </div>
       </Header>
     </div>
   );
